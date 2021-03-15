@@ -19,6 +19,7 @@ import CourseLicense from '../course-license';
 import messages from './messages';
 import { SequenceNavigation, UnitNavigation } from './sequence-navigation';
 import SequenceContent from './SequenceContent';
+import Sidebar from '../Sidebar';
 
 /** [MM-P2P] Experiment */
 import { isMobile } from '../../../experiments/mm-p2p/utils';
@@ -167,6 +168,9 @@ function Sequence({
                 handlePrevious();
               }}
               goToCourseExitPage={() => goToCourseExitPage()}
+              toggleSidebar={toggleSidebar}
+              isSidebarVisible={isSidebarVisible}
+              isMobileWidth={isMobileWidth}
             />
             <div className="unit-container flex-grow-1">
               <SequenceContent

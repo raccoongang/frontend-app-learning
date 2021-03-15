@@ -13,8 +13,11 @@ import Sequence from './sequence';
 import { CelebrationModal, shouldCelebrateOnSectionLoad } from './celebration';
 import ContentTools from './content-tools';
 import CourseBreadcrumbs from './CourseBreadcrumbs';
+import SidebarNotificationButton from './SidebarNotificationButton';
+
 import CourseSock from '../../generic/course-sock';
 import { useModel } from '../../generic/model-store';
+import useWindowSize from '../../generic/tabs/useWindowSize';
 
 /** [MM-P2P] Experiment */
 import { initCoursewareMMP2P, MMP2PBlockModal } from '../../experiments/mm-p2p';
@@ -59,6 +62,15 @@ function Course({
 
   /** [MM-P2P] Experiment */
   const MMP2P = initCoursewareMMP2P(courseId, sequenceId, unitId);
+
+  const windowSize = useWindowSize();
+  const isMobileWidth = windowSize.width <= 576;
+
+  const [sidebarVisible, setSidebar] = useState(false);
+  const isSidebarVisible = () => sidebarVisible && setSidebar;
+  const toggleSidebar = () => {
+    if (!sidebarVisible) { setSidebar(true); } else { setSidebar(false); }
+  };
 
   return (
     <>
