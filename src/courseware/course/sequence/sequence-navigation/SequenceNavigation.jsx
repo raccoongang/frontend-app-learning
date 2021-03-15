@@ -28,6 +28,9 @@ function SequenceNavigation({
   nextSequenceHandler,
   previousSequenceHandler,
   goToCourseExitPage,
+  toggleSidebar,
+  isSidebarVisible,
+  isMobileWidth,
   mmp2p,
 }) {
   const sequence = useModel('sequences', sequenceId);
@@ -83,6 +86,13 @@ function SequenceNavigation({
       {renderUnitButtons()}
       {renderNextButton()}
 
+      {isMobileWidth ? (
+        <SidebarNotificationButton
+          toggleSidebar={toggleSidebar}
+          isSidebarVisible={isSidebarVisible}
+        />
+      ) : null}
+
       {/** [MM-P2P] Experiment */}
       { mmp2p.state.isEnabled && <MMP2PFlyoverTriggerMobile options={mmp2p} /> }
       <div className="rev1512ToggleFlyoverSequenceLocation" />
@@ -99,6 +109,9 @@ SequenceNavigation.propTypes = {
   nextSequenceHandler: PropTypes.func.isRequired,
   previousSequenceHandler: PropTypes.func.isRequired,
   goToCourseExitPage: PropTypes.func.isRequired,
+  toggleSidebar: PropTypes.func.isRequired,
+  isSidebarVisible: PropTypes.func.isRequired,
+  isMobileWidth: PropTypes.bool.isRequired,
   /** [MM-P2P] Experiment */
   mmp2p: PropTypes.shape({
     state: PropTypes.shape({

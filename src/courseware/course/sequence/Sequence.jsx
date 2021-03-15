@@ -33,6 +33,10 @@ function Sequence({
   nextSequenceHandler,
   previousSequenceHandler,
   intl,
+  toggleSidebar,
+  sidebarVisible,
+  isSidebarVisible,
+  isMobileWidth,
   mmp2p,
 }) {
   const course = useModel('coursewareMeta', courseId);
@@ -200,6 +204,12 @@ function Sequence({
             </div>
           </div>
 
+          <Sidebar
+            toggleSidebar={toggleSidebar}
+            sidebarVisible={sidebarVisible}
+            isMobileWidth={isMobileWidth}
+          />
+
           {/** [MM-P2P] Experiment */}
           {(mmp2p.state.isEnabled && mmp2p.flyover.isVisible) && (
             isMobile()
@@ -228,6 +238,10 @@ Sequence.propTypes = {
   nextSequenceHandler: PropTypes.func.isRequired,
   previousSequenceHandler: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  toggleSidebar: PropTypes.func.isRequired,
+  sidebarVisible: PropTypes.bool.isRequired,
+  isSidebarVisible: PropTypes.func.isRequired,
+  isMobileWidth: PropTypes.bool.isRequired,
 
   /** [MM-P2P] Experiment */
   mmp2p: PropTypes.shape({

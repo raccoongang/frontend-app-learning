@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { useDispatch } from 'react-redux';
@@ -88,13 +88,22 @@ function Course({
           }}
         />
       )}
-      <CourseBreadcrumbs
-        courseId={courseId}
-        sectionId={section ? section.id : null}
-        sequenceId={sequenceId}
-        //* * [MM-P2P] Experiment */
-        mmp2p={MMP2P}
-      />
+      <div className="breadcrumb-container">
+        <CourseBreadcrumbs
+          courseId={courseId}
+          sectionId={section ? section.id : null}
+          sequenceId={sequenceId}
+          //* * [MM-P2P] Experiment */
+          mmp2p={MMP2P}
+        />
+        { !isMobileWidth ? (
+          <SidebarNotificationButton
+            toggleSidebar={toggleSidebar}
+            isSidebarVisible={isSidebarVisible}
+          />
+        ) : null}
+      </div>
+
       <AlertList topic="sequence" />
       <Sequence
         unitId={unitId}
@@ -103,6 +112,10 @@ function Course({
         unitNavigationHandler={unitNavigationHandler}
         nextSequenceHandler={nextSequenceHandler}
         previousSequenceHandler={previousSequenceHandler}
+        toggleSidebar={toggleSidebar}
+        isSidebarVisible={isSidebarVisible}
+        sidebarVisible={sidebarVisible}
+        isMobileWidth={isMobileWidth}
         //* * [MM-P2P] Experiment */
         mmp2p={MMP2P}
       />
