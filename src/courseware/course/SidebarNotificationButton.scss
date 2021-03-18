@@ -10,7 +10,7 @@
     float: right;
     margin-top: 10px;
 
-    @media (max-width: -1 + map-get($grid-breakpoints, 'sm')) {
+    @media (max-width: -1 + map-get($grid-breakpoints, 'md')) {
         border: none;
         margin: 5px 20px 0 20px;
     }
@@ -36,7 +36,7 @@
     border-radius: 50%;
     position: absolute;
     display: inline-block;
-    @media (max-width: -1 + map-get($grid-breakpoints, 'sm')) { 
-        right: 5px;
+    @media (max-width: -1 + map-get($grid-breakpoints, 'md')) {
+        right: 7px;
     }
 }
