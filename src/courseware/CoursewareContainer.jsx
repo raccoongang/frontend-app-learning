@@ -41,6 +41,31 @@ const checkResumeRedirect = memoize((courseStatus, courseId, sequenceId, firstSe
   }
 });
 
+const checkSectionToSequenceRedirect = memoize((courseStatus, courseId, sequenceStatus, section, unit) => {
+  if (courseStatus === 'loaded' && sequenceStatus === 'failed' && section) {
+    // If the sequence failed to load as a sequence, but it *did* load as a section, then...
+    if (unit && section.sequenceIds && section.sequenceIds.includes(unit.sequenceId)) {
+      // If we have a unit and the unit's in the section, then swap out the sectionId
+      // for the unit's parent sequenceId.
+      history.replace(`/course/${courseId}/${unit.sequenceId}/${unit.id}`);
+    } else if (section.sequenceIds && section.sequenceIds[0]) {
+      // Else, if the section is non-empty, redirect to its first sequence.
+      history.replace(`/course/${courseId}/${section.sequenceIds[0]}`);
+    } else {
+      // Otherwise, just go to the course root, letting the resume redirect take care of things.
+      history.replace(`/course/${courseId}`);
+    }
+  }
+});
+
+const checkUnitToSequenceUnitRedirect = memoize((courseStatus, courseId, sequenceStatus, unit) => {
+  if (courseStatus === 'loaded' && sequenceStatus === 'failed' && unit) {
+    // If the sequence failed to load as a sequence, but it *did* load as a unit, then
+    // insert the unit's parent sequenceId into the URL.
+    history.replace(`/course/${courseId}/${unit.sequenceId}/${unit.id}`);
+  }
+});
+
 const checkContentRedirect = memoize((courseId, sequenceStatus, sequenceId, sequence, unitId) => {
   if (sequenceStatus === 'loaded' && sequenceId && !unitId) {
     if (sequence.unitIds !== undefined && sequence.unitIds.length > 0) {
@@ -96,7 +121,10 @@ class CoursewareContainer extends Component {
       courseStatus,
       sequenceStatus,
       sequence,
+      unit,
       firstSequenceId,
+      unitViaSequenceId,
+      sectionViaSequenceId,
       match: {
         params: {
           courseId: routeCourseId,
@@ -112,6 +140,19 @@ class CoursewareContainer extends Component {
 
     // Redirect to the legacy experience for exams.
     checkExamRedirect(sequenceStatus, sequence);
+
+    // Check (a) section to sequence and (b) section-unit to sequence-unit redirects:
+    //    /course/:courseId/:sectionId         -> /course/:courseId/:sequenceId
+    //    /course/:courseId/:sectionId/:unitId -> /course/:courseId/:sequenceId/:unitId
+    // by replacing :sectionId with the child :sequenceId to which :unitId belongs.
+    // If the unit is omitted or not within the section at all, then just redirect to
+    // the first sequence in the section, or to the course root if the section is empty.
+    checkSectionToSequenceRedirect(courseStatus, courseId, sequenceStatus, sectionViaSequenceId, unit);
+
+    // Check unit to sequence-unit redirect:
+    //    /course/:courseId/:unitId -> /course/:courseId/:sequenceId/:unitId
+    // by filling in the ID of the parent sequence of :unitId.
+    checkUnitToSequenceUnitRedirect(courseStatus, courseId, sequenceStatus, unitViaSequenceId);
 
     // Determine if we need to redirect because our URL is incomplete.
     checkContentRedirect(courseId, sequenceStatus, sequenceId, sequence, routeUnitId);
@@ -249,11 +290,22 @@ class CoursewareContainer extends Component {
   }
 }
 
+const unitShape = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+  sequenceId: PropTypes.string.isRequired,
+});
+
 const sequenceShape = PropTypes.shape({
   id: PropTypes.string.isRequired,
   unitIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  sectionId: PropTypes.string.isRequired,
   isTimeLimited: PropTypes.bool,
   lmsWebUrl: PropTypes.string,
+});
+
+const sectionShape = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+  sequenceIds: PropTypes.arrayOf(PropTypes.string).isRequired,
 });
 
 const courseShape = PropTypes.shape({
@@ -278,8 +330,11 @@ CoursewareContainer.propTypes = {
   sequenceStatus: PropTypes.oneOf(['loaded', 'loading', 'failed']).isRequired,
   nextSequence: sequenceShape,
   previousSequence: sequenceShape,
+  unitViaSequenceId: unitShape,
+  sectionViaSequenceId: sectionShape,
   course: courseShape,
   sequence: sequenceShape,
+  unit: unitShape,
   saveSequencePosition: PropTypes.func.isRequired,
   checkBlockCompletion: PropTypes.func.isRequired,
   fetchCourse: PropTypes.func.isRequired,
@@ -292,8 +347,11 @@ CoursewareContainer.defaultProps = {
   firstSequenceId: null,
   nextSequence: null,
   previousSequence: null,
+  unitViaSequenceId: null,
+  sectionViaSequenceId: null,
   course: null,
   sequence: null,
+  unit: null,
 };
 
 const currentCourseSelector = createSelector(
@@ -306,6 +364,12 @@ const currentSequenceSelector = createSelector(
   (state) => state.models.sequences || {},
   (state) => state.courseware.sequenceId,
   (sequencesById, sequenceId) => (sequencesById[sequenceId] ? sequencesById[sequenceId] : null),
+);
+
+const currentUnitSelector = createSelector(
+  (state) => state.models.units || {},
+  (state) => state.courseware.unitId,
+  (unitsById, unitId) => (unitsById[unitId] ? unitsById[unitId] : null),
 );
 
 const sequenceIdsSelector = createSelector(
@@ -367,6 +431,18 @@ const firstSequenceIdSelector = createSelector(
   },
 );
 
+const sectionViaSequenceIdSelector = createSelector(
+  (state) => state.models.sections || {},
+  (state) => state.courseware.sequenceId,
+  (sectionsById, sequenceId) => (sectionsById[sequenceId] ? sectionsById[sequenceId] : null),
+);
+
+const unitViaSequenceIdSelector = createSelector(
+  (state) => state.models.units || {},
+  (state) => state.courseware.sequenceId,
+  (unitsById, sequenceId) => (unitsById[sequenceId] ? unitsById[sequenceId] : null),
+);
+
 const mapStateToProps = (state) => {
   const {
     courseId, sequenceId, courseStatus, sequenceStatus,
@@ -379,9 +455,12 @@ const mapStateToProps = (state) => {
     sequenceStatus,
     course: currentCourseSelector(state),
     sequence: currentSequenceSelector(state),
+    unit: currentUnitSelector(state),
     previousSequence: previousSequenceSelector(state),
     nextSequence: nextSequenceSelector(state),
     firstSequenceId: firstSequenceIdSelector(state),
+    sectionViaSequenceId: sectionViaSequenceIdSelector(state),
+    unitViaSequenceId: unitViaSequenceIdSelector(state),
   };
 };
 
