@@ -63,6 +63,7 @@ function OutlineTab({ intl }) {
       url: resumeCourseUrl,
     },
     offer,
+    username,
     verifiedMode,
   } = useModel('outline', courseId);
 
@@ -204,6 +205,7 @@ function OutlineTab({ intl }) {
           <div className="col col-12 col-md-4">
             <ProctoringInfoPanel
               courseId={courseId}
+              username={username}
             />
             {courseGoalToDisplay && goalOptions && goalOptions.length > 0 && (
               <UpdateGoalSelector

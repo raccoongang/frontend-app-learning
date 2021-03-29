@@ -140,8 +140,11 @@ export async function getProgressTabData(courseId) {
   // }
 }
 
-export async function getProctoringInfoData(courseId) {
-  const url = `${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/user_onboarding/status?course_id=${encodeURIComponent(courseId)}`;
+export async function getProctoringInfoData(courseId, username) {
+  let url = `${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/user_onboarding/status?course_id=${encodeURIComponent(courseId)}`;
+  if (username) {
+    url += `&username=${encodeURIComponent(username)}`;
+  }
   try {
     const { data } = await getAuthenticatedHttpClient().get(url);
     return data;
@@ -183,6 +186,7 @@ export async function getOutlineTabData(courseId) {
   const hasEnded = data.has_ended;
   const offer = camelCaseObject(data.offer);
   const resumeCourse = camelCaseObject(data.resume_course);
+  const username = camelCaseObject(data.username);
   const verifiedMode = camelCaseObject(data.verified_mode);
   const welcomeMessageHtml = data.welcome_message_html;
 
@@ -199,6 +203,7 @@ export async function getOutlineTabData(courseId) {
     hasEnded,
     offer,
     resumeCourse,
+    username,
     verifiedMode,
     welcomeMessageHtml,
   };
