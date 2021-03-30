@@ -130,6 +130,12 @@ describe('CoursewareContainer', () => {
     });
   }
 
+  async function waitForSpinnerToBeRemoved() {
+    // This async utility function waits for the page spinner to be removed,
+    // such that we can wait for our main content to load before making more assertions.
+    await waitForElementToBeRemoved(screen.getByRole('status'));
+  }
+
   it('should initialize to show a spinner', () => {
     history.push('/course/abc123');
     render(component);
@@ -183,10 +189,7 @@ describe('CoursewareContainer', () => {
 
         history.push(`/course/${courseId}`);
         const { container } = render(component);
-
-        // This is an important line that ensures the spinner has been removed - and thus our main
-        // content has been loaded - prior to proceeding with our expectations.
-        await waitForElementToBeRemoved(screen.getByRole('status'));
+        await waitForSpinnerToBeRemoved();
 
         assertLoadedHeader(container);
         assertSequenceNavigation(container);
@@ -210,10 +213,7 @@ describe('CoursewareContainer', () => {
 
         history.push(`/course/${courseId}`);
         const { container } = render(component);
-
-        // This is an important line that ensures the spinner has been removed - and thus our main
-        // content has been loaded - prior to proceeding with our expectations.
-        await waitForElementToBeRemoved(screen.getByRole('status'));
+        await waitForSpinnerToBeRemoved();
 
         assertLoadedHeader(container);
         assertSequenceNavigation(container);
@@ -231,10 +231,7 @@ describe('CoursewareContainer', () => {
       it('should pick the first unit if position was not defined (activeUnitIndex becomes 0)', async () => {
         history.push(`/course/${courseId}/${sequenceBlock.id}`);
         const { container } = render(component);
-
-        // This is an important line that ensures the spinner has been removed - and thus our main
-        // content has been loaded - prior to proceeding with our expectations.
-        await waitForElementToBeRemoved(screen.getByRole('status'));
+        await waitForSpinnerToBeRemoved();
 
         assertLoadedHeader(container);
         assertSequenceNavigation(container);
@@ -254,10 +251,7 @@ describe('CoursewareContainer', () => {
 
         history.push(`/course/${courseId}/${sequenceBlock.id}`);
         const { container } = render(component);
-
-        // This is an important line that ensures the spinner has been removed - and thus our main
-        // content has been loaded - prior to proceeding with our expectations.
-        await waitForElementToBeRemoved(screen.getByRole('status'));
+        await waitForSpinnerToBeRemoved();
 
         assertLoadedHeader(container);
         assertSequenceNavigation(container);
@@ -275,10 +269,7 @@ describe('CoursewareContainer', () => {
       it('should load the specified unit', async () => {
         history.push(`/course/${courseId}/${sequenceBlock.id}/${unitBlocks[2].id}`);
         const { container } = render(component);
-
-        // This is an important line that ensures the spinner has been removed - and thus our main
-        // content has been loaded - prior to proceeding with our expectations.
-        await waitForElementToBeRemoved(screen.getByRole('status'));
+        await waitForSpinnerToBeRemoved();
 
         assertLoadedHeader(container);
         assertSequenceNavigation(container);
@@ -295,10 +286,7 @@ describe('CoursewareContainer', () => {
         axiosMock.onPost(`${courseId}/xblock/${sequenceBlock.id}/handler/xmodule_handler/get_completion`).reply(200, {
           complete: true,
         });
-
-        // This is an important line that ensures the spinner has been removed - and thus our main
-        // content has been loaded - prior to proceeding with our expectations.
-        await waitForElementToBeRemoved(screen.getByRole('status'));
+        await waitForSpinnerToBeRemoved();
 
         const sequenceNavButtons = container.querySelectorAll('nav.sequence-navigation button');
         const sequenceNextButton = sequenceNavButtons[4];
@@ -335,10 +323,7 @@ describe('CoursewareContainer', () => {
 
         history.push(`/course/${courseId}/${sequenceBlock.id}/${unitBlocks[2].id}`);
         render(component);
-
-        // This is an important line that ensures the spinner has been removed - and thus our main
-        // content has been loaded - prior to proceeding with our expectations.
-        await waitForElementToBeRemoved(screen.getByRole('status'));
+        await waitForSpinnerToBeRemoved();
 
         expect(global.location.assign).toHaveBeenCalledWith(sequenceBlock.lms_web_url);
       });
@@ -365,7 +350,7 @@ describe('CoursewareContainer', () => {
       const courseMetadata = setUpWithDeniedStatus('enrollment_required');
 
       render(component);
-      await waitForElementToBeRemoved(screen.getByRole('status'));
+      await waitForSpinnerToBeRemoved();
 
       expect(global.location.href).toEqual(`http://localhost/redirect/course-home/${courseMetadata.id}`);
     });
@@ -374,7 +359,7 @@ describe('CoursewareContainer', () => {
       const courseMetadata = setUpWithDeniedStatus('authentication_required');
 
       render(component);
-      await waitForElementToBeRemoved(screen.getByRole('status'));
+      await waitForSpinnerToBeRemoved();
 
       expect(global.location.href).toEqual(`http://localhost/redirect/course-home/${courseMetadata.id}`);
     });
@@ -383,7 +368,7 @@ describe('CoursewareContainer', () => {
       setUpWithDeniedStatus('unfulfilled_milestones');
 
       render(component);
-      await waitForElementToBeRemoved(screen.getByRole('status'));
+      await waitForSpinnerToBeRemoved();
 
       expect(global.location.href).toEqual('http://localhost/redirect/dashboard');
     });
@@ -392,7 +377,7 @@ describe('CoursewareContainer', () => {
       setUpWithDeniedStatus('audit_expired');
 
       render(component);
-      await waitForElementToBeRemoved(screen.getByRole('status'));
+      await waitForSpinnerToBeRemoved();
 
       expect(global.location.href).toEqual('http://localhost/redirect/dashboard?access_response_error=uhoh%20oh%20no');
     });
@@ -401,7 +386,7 @@ describe('CoursewareContainer', () => {
       setUpWithDeniedStatus('course_not_started');
 
       render(component);
-      await waitForElementToBeRemoved(screen.getByRole('status'));
+      await waitForSpinnerToBeRemoved();
 
       const startDate = '2/5/2013'; // This date is based on our courseMetadata factory's sample data.
       expect(global.location.href).toEqual(`http://localhost/redirect/dashboard?notlive=${startDate}`);
