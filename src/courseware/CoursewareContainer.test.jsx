@@ -225,14 +225,19 @@ describe('CoursewareContainer', () => {
     });
 
     describe('when the URL contains a section ID instead of a sequence ID', () => {
-      const { courseBlocks, unitTree, sequenceTree } = buildBinaryCourseBlocks(courseId, courseMetadata.name);
+      const {
+        courseBlocks, unitTree, sequenceTree, sectionTree,
+      } = buildBinaryCourseBlocks(
+        courseId, courseMetadata.name,
+      );
+      const resumeSequenceId = sequenceTree[0][0].id;
+      const resumeUnitId = unitTree[0][0][1].id;
 
       beforeEach(async () => {
         setUpMockRequests({ courseBlocks });
         // The active unit will always be the second unit in the first seq of the first section.
         axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courseware/resume/${courseId}`).reply(200, {
-          sectionId: sequenceTree[0][0].id,
-          unitId: unitTree[0][0][1].id,
+          sectionId: resumeSequenceId, unitId: resumeUnitId,
         });
       });
 
@@ -255,8 +260,31 @@ describe('CoursewareContainer', () => {
       });
 
       describe('when the section is empty', () => {
-        it('should choose the active unit within the section\'s first sequence', async () => {
+        // Make a (shallow-)copied course blocks object where the two sequences of the
+        // section have been removed. There will be four dangling units in the blocks; that's OK.
+        const emptySection = sectionTree[1];
+        const blocksWithEmptySection = { ...courseBlocks.blocks };
+        Object.keys(blocksWithEmptySection).forEach(blockId => {
+          if (emptySection.children.includes(blockId)) {
+            delete blocksWithEmptySection[blockId];
+          }
+        });
+        const courseBlocksWithEmptySection = {
+          ...courseBlocks,
+          blocks: blocksWithEmptySection,
+        };
 
+        it('should ignore the section ID and instead redirect to the resume unit', async () => {
+          setUpMockRequests({ courseBlocks: courseBlocksWithEmptySection });
+          history.push(`/course/${courseId}/${emptySection.id}`);
+          const { container } = render(component);
+          await waitForSpinnerToBeRemoved();
+
+          assertLoadedHeader(container);
+          assertSequenceNavigation(container, 2);
+          expect(container.querySelector('.fake-unit')).toHaveTextContent(resumeUnitId);
+          const expectedUrl = `http://localhost/course/${courseId}/${resumeSequenceId}/${resumeUnitId}`;
+          expect(global.location.href).toEqual(expectedUrl);
         });
       });
     });
