@@ -14,7 +14,7 @@ import tabMessages from '../tab-page/messages';
 import { initializeMockApp } from '../setupTest';
 
 import CoursewareContainer from './CoursewareContainer';
-import { buildSimpleCourseBlocks } from '../shared/data/__factories__/courseBlocks.factory';
+import { buildSimpleCourseBlocks, buildBinaryCourseBlocks } from '../shared/data/__factories__/courseBlocks.factory';
 import initializeStore from '../store';
 import { appendBrowserTimezoneToUrl } from '../utils';
 
@@ -160,15 +160,15 @@ describe('CoursewareContainer', () => {
       expect(courseHeader.querySelector('.course-title')).toHaveTextContent(courseMetadata.name);
     }
 
-    function assertSequenceNavigation(container) {
+    function assertSequenceNavigation(container, expectedUnitCount = 3) {
       // Ensure we had appropriate sequence navigation buttons.  We should only have one unit.
       const sequenceNavButtons = container.querySelectorAll('nav.sequence-navigation button');
-      expect(sequenceNavButtons).toHaveLength(5);
+      expect(sequenceNavButtons).toHaveLength(expectedUnitCount + 2);
 
       expect(sequenceNavButtons[0]).toHaveTextContent('Previous');
       // Prove this button is rendering an SVG tasks icon, meaning it's a unit/vertical.
       expect(sequenceNavButtons[1].querySelector('svg')).toHaveClass('fa-tasks');
-      expect(sequenceNavButtons[4]).toHaveTextContent('Next');
+      expect(sequenceNavButtons[sequenceNavButtons.length - 1]).toHaveTextContent('Next');
     }
 
     beforeEach(async () => {
@@ -221,6 +221,65 @@ describe('CoursewareContainer', () => {
         expect(container.querySelector('.fake-unit')).toHaveTextContent('Unit Contents');
         expect(container.querySelector('.fake-unit')).toHaveTextContent(courseId);
         expect(container.querySelector('.fake-unit')).toHaveTextContent(unitBlocks[2].id);
+      });
+    });
+
+    describe('when the URL contains a section ID instead of a sequence ID', () => {
+      const { courseBlocks, unitTree, sequenceTree } = buildBinaryCourseBlocks(courseId, courseMetadata.name);
+
+      beforeEach(async () => {
+        setUpMockRequests({ courseBlocks });
+        // The active unit will always be the second unit in the first seq of the first section.
+        axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courseware/resume/${courseId}`).reply(200, {
+          sectionId: sequenceTree[0][0].id,
+          unitId: unitTree[0][0][1].id,
+        });
+      });
+
+      describe('when the URL contains a unit ID within the section', () => {
+        it('should replace the section ID in favor of the unit\'s sequence ID', async () => {
+
+        });
+      });
+
+      describe('when the URL contains a unit ID *not* within the (non-empty) section', () => {
+        it('should choose the active unit within the section\'s first sequence', async () => {
+
+        });
+      });
+
+      describe('when the URL contains *no* unit ID, and the section is non-empty', () => {
+        it('should choose the active unit within the section\'s first sequence', async () => {
+
+        });
+      });
+
+      describe('when the section is empty', () => {
+        it('should choose the active unit within the section\'s first sequence', async () => {
+
+        });
+      });
+    });
+
+    describe('when the URL only contains a unit ID', () => {
+      const { courseBlocks, unitTree, sequenceTree } = buildBinaryCourseBlocks(courseId, courseMetadata.name);
+
+      beforeEach(async () => {
+        setUpMockRequests({ courseBlocks });
+      });
+
+      it('should insert the sequence ID into the URL', async () => {
+        const unitBlock = unitTree[1][0][1];
+        history.push(`/course/${courseId}/${unitBlock.id}`);
+        const { container } = render(component);
+        await waitForSpinnerToBeRemoved();
+
+        assertLoadedHeader(container);
+        assertSequenceNavigation(container, 2);
+        expect(container.querySelector('.fake-unit')).toHaveTextContent(unitBlock.id);
+        const expectedSequenceBlock = sequenceTree[1][0];
+        const expectedUrl = `http://localhost/course/${courseId}/${expectedSequenceBlock.id}/${unitBlock.id}`;
+        expect(global.location.href).toEqual(expectedUrl);
       });
     });
 
