@@ -11,7 +11,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { history } from '@edx/frontend-platform';
 
-import { SequenceExamWrapper } from '../../../../packages/frontend-lib-special-exams/src/components/Unit';
+import { SequenceExamWrapper } from '../../../../packages/frontend-lib-special-exams/src';
 import PageLoading from '../../../generic/PageLoading';
 import { UserMessagesContext, ALERT_TYPES } from '../../../generic/user-messages';
 import { useModel } from '../../../generic/model-store';
@@ -122,20 +122,6 @@ function Sequence({
       />
     );
   }
-
-  /*
-  TODO: When the micro-frontend supports viewing special exams without redirecting to the legacy
-  experience, we can remove this whole conditional. For now, though, we show the spinner here
-  because we expect CoursewareContainer to be performing a redirect to the legacy experience while
-  we're waiting. That redirect may take a few seconds, so we show the spinner in the meantime.
-  */
-  // if (sequenceStatus === 'loaded' && sequence.isTimeLimited) {
-  //   return (
-  //     <PageLoading
-  //       srMessage={intl.formatMessage(messages['learn.loading.learning.sequence'])}
-  //     />
-  //   );
-  // }
 
   const gated = sequence && sequence.gatedContent !== undefined && sequence.gatedContent.gated;
   const goToCourseExitPage = () => {
