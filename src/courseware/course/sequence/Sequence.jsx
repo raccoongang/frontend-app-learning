@@ -8,6 +8,7 @@ import {
   sendTrackingLogEvent,
 } from '@edx/frontend-platform/analytics';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { AppContext } from '@edx/frontend-platform/react';
 import { useSelector } from 'react-redux';
 import { history } from '@edx/frontend-platform';
 
@@ -38,6 +39,7 @@ function Sequence({
   const course = useModel('coursewareMeta', courseId);
   const sequence = useModel('sequences', sequenceId);
   const unit = useModel('units', unitId);
+  const { authenticatedUser } = useContext(AppContext);
   const sequenceStatus = useSelector(state => state.courseware.sequenceStatus);
   const handleNext = () => {
     const nextIndex = sequence.unitIds.indexOf(unitId) + 1;
@@ -193,7 +195,7 @@ function Sequence({
   if (sequenceStatus === 'loaded') {
     return (
       <div>
-        <SequenceExamWrapper sequence={sequence} courseId={courseId}>
+        <SequenceExamWrapper sequence={sequence} courseId={courseId} userId={authenticatedUser.userId}>
           {defaultContent}
         </SequenceExamWrapper>
         <CourseLicense license={course.license || undefined} />
