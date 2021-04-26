@@ -59,16 +59,6 @@ const checkUnitToSequenceUnitRedirect = memoize((courseStatus, courseId, sequenc
   }
 });
 
-const checkSpecialExamRedirect = memoize((sequenceStatus, sequence) => {
-  if (sequenceStatus === 'loaded') {
-    if (sequence.isTimeLimited && sequence.legacyWebUrl !== undefined) {
-      // global.location.assign(sequence.legacyWebUrl);
-      // eslint-disable-next-line no-console
-      console.log('Exam redirect');
-    }
-  }
-});
-
 const checkSequenceToSequenceUnitRedirect = memoize((courseId, sequenceStatus, sequence, unitId) => {
   if (sequenceStatus === 'loaded' && sequence.id && !unitId) {
     if (sequence.unitIds !== undefined && sequence.unitIds.length > 0) {
@@ -174,11 +164,6 @@ class CoursewareContainer extends Component {
     //    /course/:courseId/:unitId -> /course/:courseId/:sequenceId/:unitId
     // by filling in the ID of the parent sequence of :unitId.
     checkUnitToSequenceUnitRedirect(courseStatus, courseId, sequenceStatus, unitViaSequenceId);
-
-    // Check special exam redirect:
-    //    /course/:courseId/:sequenceId(/:unitId) -> :legacyWebUrl
-    // because special exams are currently still served in the legacy LMS frontend.
-    checkSpecialExamRedirect(sequenceStatus, sequence);
 
     // Check to sequence to sequence-unit redirect:
     //    /course/:courseId/:sequenceId -> /course/:courseId/:sequenceId/:unitId
