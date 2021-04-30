@@ -39,6 +39,7 @@ function Sequence({
   const sequence = useModel('sequences', sequenceId);
   const unit = useModel('units', unitId);
   const sequenceStatus = useSelector(state => state.courseware.sequenceStatus);
+  const isSpecialExams = useSelector(state => state.courseware.isSpecialExams);
   const handleNext = () => {
     const nextIndex = sequence.unitIds.indexOf(unitId) + 1;
     if (nextIndex < sequence.unitIds.length) {
@@ -116,6 +117,20 @@ function Sequence({
     if (!sequenceId) {
       return (<div> {intl.formatMessage(messages['learn.sequence.no.content'])} </div>);
     }
+    return (
+      <PageLoading
+        srMessage={intl.formatMessage(messages['learn.loading.learning.sequence'])}
+      />
+    );
+  }
+
+  /*
+  TODO: When the micro-frontend supports viewing special exams without redirecting to the legacy
+  experience, we can remove this whole conditional. For now, though, we show the spinner here
+  because we expect CoursewareContainer to be performing a redirect to the legacy experience while
+  we're waiting. That redirect may take a few seconds, so we show the spinner in the meantime.
+  */
+  if (sequenceStatus === 'loaded' && sequence.isTimeLimited && !isSpecialExams) {
     return (
       <PageLoading
         srMessage={intl.formatMessage(messages['learn.loading.learning.sequence'])}

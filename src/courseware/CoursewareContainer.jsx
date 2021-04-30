@@ -59,6 +59,14 @@ const checkUnitToSequenceUnitRedirect = memoize((courseStatus, courseId, sequenc
   }
 });
 
+const checkSpecialExamRedirect = memoize((sequenceStatus, sequence) => {
+  if (sequenceStatus === 'loaded') {
+    if (sequence.isTimeLimited && sequence.legacyWebUrl !== undefined) {
+      global.location.assign(sequence.legacyWebUrl);
+    }
+  }
+});
+
 const checkSequenceToSequenceUnitRedirect = memoize((courseId, sequenceStatus, sequence, unitId) => {
   if (sequenceStatus === 'loaded' && sequence.id && !unitId) {
     if (sequence.unitIds !== undefined && sequence.unitIds.length > 0) {
@@ -113,6 +121,7 @@ class CoursewareContainer extends Component {
       sequenceId,
       courseStatus,
       sequenceStatus,
+      isSpecialExams,
       sequence,
       firstSequenceId,
       unitViaSequenceId,
@@ -164,6 +173,13 @@ class CoursewareContainer extends Component {
     //    /course/:courseId/:unitId -> /course/:courseId/:sequenceId/:unitId
     // by filling in the ID of the parent sequence of :unitId.
     checkUnitToSequenceUnitRedirect(courseStatus, courseId, sequenceStatus, unitViaSequenceId);
+
+    // Check special exam redirect:
+    //    /course/:courseId/:sequenceId(/:unitId) -> :legacyWebUrl
+    // because special exams are currently still served in the legacy LMS frontend.
+    if (!isSpecialExams){
+      checkSpecialExamRedirect(sequenceStatus, sequence);
+    }
 
     // Check to sequence to sequence-unit redirect:
     //    /course/:courseId/:sequenceId -> /course/:courseId/:sequenceId/:unitId
@@ -448,7 +464,11 @@ const unitViaSequenceIdSelector = createSelector(
 
 const mapStateToProps = (state) => {
   const {
-    courseId, sequenceId, courseStatus, sequenceStatus,
+    courseId,
+    sequenceId,
+    courseStatus,
+    sequenceStatus,
+    isSpecialExams,
   } = state.courseware;
 
   return {
@@ -456,6 +476,7 @@ const mapStateToProps = (state) => {
     sequenceId,
     courseStatus,
     sequenceStatus,
+    isSpecialExams,
     course: currentCourseSelector(state),
     sequence: currentSequenceSelector(state),
     previousSequence: previousSequenceSelector(state),
