@@ -121,7 +121,7 @@ class CoursewareContainer extends Component {
       sequenceId,
       courseStatus,
       sequenceStatus,
-      isSpecialExams,
+      specialExamsEnabled,
       sequence,
       firstSequenceId,
       unitViaSequenceId,
@@ -177,7 +177,7 @@ class CoursewareContainer extends Component {
     // Check special exam redirect:
     //    /course/:courseId/:sequenceId(/:unitId) -> :legacyWebUrl
     // because special exams are currently still served in the legacy LMS frontend.
-    if (!isSpecialExams){
+    if (!specialExamsEnabled){
       checkSpecialExamRedirect(sequenceStatus, sequence);
     }
 
@@ -468,7 +468,7 @@ const mapStateToProps = (state) => {
     sequenceId,
     courseStatus,
     sequenceStatus,
-    isSpecialExams,
+    specialExamsEnabled,
   } = state.courseware;
 
   return {
@@ -476,7 +476,7 @@ const mapStateToProps = (state) => {
     sequenceId,
     courseStatus,
     sequenceStatus,
-    isSpecialExams,
+    specialExamsEnabled,
     course: currentCourseSelector(state),
     sequence: currentSequenceSelector(state),
     previousSequence: previousSequenceSelector(state),

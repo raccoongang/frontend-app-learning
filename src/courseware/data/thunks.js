@@ -33,7 +33,7 @@ export function fetchCourse(courseId) {
           model: courseMetadataResult.value,
         }));
         dispatch(setIsSpecialExams({
-          isSpecialExams: courseMetadataResult.value.isSpecialExams
+          specialExamsEnabled: courseMetadataResult.value.specialExamsEnabled
         }));
       }
 

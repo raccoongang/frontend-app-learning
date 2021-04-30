@@ -39,7 +39,7 @@ function Sequence({
   const sequence = useModel('sequences', sequenceId);
   const unit = useModel('units', unitId);
   const sequenceStatus = useSelector(state => state.courseware.sequenceStatus);
-  const isSpecialExams = useSelector(state => state.courseware.isSpecialExams);
+  const specialExamsEnabled = useSelector(state => state.courseware.specialExamsEnabled);
   const handleNext = () => {
     const nextIndex = sequence.unitIds.indexOf(unitId) + 1;
     if (nextIndex < sequence.unitIds.length) {
@@ -130,7 +130,7 @@ function Sequence({
   because we expect CoursewareContainer to be performing a redirect to the legacy experience while
   we're waiting. That redirect may take a few seconds, so we show the spinner in the meantime.
   */
-  if (sequenceStatus === 'loaded' && sequence.isTimeLimited && !isSpecialExams) {
+  if (sequenceStatus === 'loaded' && sequence.isTimeLimited && !specialExamsEnabled) {
     return (
       <PageLoading
         srMessage={intl.formatMessage(messages['learn.loading.learning.sequence'])}

@@ -13,11 +13,11 @@ const slice = createSlice({
     courseId: null,
     sequenceStatus: 'loading',
     sequenceId: null,
-    isSpecialExams: false,
+    specialExamsEnabled: false,
   },
   reducers: {
     setIsSpecialExams: (state, { payload }) => {
-      state.isSpecialExams = payload.isSpecialExams;
+      state.specialExamsEnabled = payload.specialExamsEnabled;
     },
     fetchCourseRequest: (state, { payload }) => {
       state.courseId = payload.courseId;
