@@ -16,7 +16,7 @@ const slice = createSlice({
     specialExamsEnabled: false,
   },
   reducers: {
-    setIsSpecialExams: (state, { payload }) => {
+    setsSpecialExamsEnabled: (state, { payload }) => {
       state.specialExamsEnabled = payload.specialExamsEnabled;
     },
     fetchCourseRequest: (state, { payload }) => {
@@ -51,7 +51,7 @@ const slice = createSlice({
 });
 
 export const {
-  setIsSpecialExams,
+  setsSpecialExamsEnabled,
   fetchCourseRequest,
   fetchCourseSuccess,
   fetchCourseFailure,

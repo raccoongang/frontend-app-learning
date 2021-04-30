@@ -10,7 +10,7 @@ import {
   updateModel, addModel, updateModelsMap, addModelsMap, updateModels,
 } from '../../generic/model-store';
 import {
-  setIsSpecialExams,
+  setsSpecialExamsEnabled,
   fetchCourseRequest,
   fetchCourseSuccess,
   fetchCourseFailure,
@@ -32,7 +32,7 @@ export function fetchCourse(courseId) {
           modelType: 'coursewareMeta',
           model: courseMetadataResult.value,
         }));
-        dispatch(setIsSpecialExams({
+        dispatch(setsSpecialExamsEnabled({
           specialExamsEnabled: courseMetadataResult.value.specialExamsEnabled
         }));
       }
