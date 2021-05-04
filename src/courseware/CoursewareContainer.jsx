@@ -177,7 +177,7 @@ class CoursewareContainer extends Component {
     // Check special exam redirect:
     //    /course/:courseId/:sequenceId(/:unitId) -> :legacyWebUrl
     // because special exams are currently still served in the legacy LMS frontend.
-    if (!specialExamsEnabled){
+    if (!specialExamsEnabled) {
       checkSpecialExamRedirect(sequenceStatus, sequence);
     }
 
@@ -365,6 +365,7 @@ CoursewareContainer.propTypes = {
   checkBlockCompletion: PropTypes.func.isRequired,
   fetchCourse: PropTypes.func.isRequired,
   fetchSequence: PropTypes.func.isRequired,
+  specialExamsEnabled: PropTypes.bool.isRequired,
 };
 
 CoursewareContainer.defaultProps = {
