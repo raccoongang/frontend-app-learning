@@ -90,6 +90,7 @@ initialize({
         SUPPORT_URL_VERIFIED_CERTIFICATE: process.env.SUPPORT_URL_VERIFIED_CERTIFICATE || null,
         TWITTER_HASHTAG: process.env.TWITTER_HASHTAG || null,
         TWITTER_URL: process.env.TWITTER_URL || null,
+        ENABLE_PROCTORING_EXAM: process.env.ENABLE_PROCTORING_EXAM || null,
       }, 'LearnerAppConfig');
     },
   },
