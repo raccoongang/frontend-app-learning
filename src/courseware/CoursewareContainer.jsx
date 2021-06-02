@@ -178,8 +178,8 @@ class CoursewareContainer extends Component {
     // Check special exam redirect:
     //    /course/:courseId/:sequenceId(/:unitId) -> :legacyWebUrl
     // because special exams are currently still served in the legacy LMS frontend.
-    const isDisabledProctoredExams = specialExamsEnabledWaffleFlag && sequence.isProctored
-      && !proctoredExamsEnabledWaffleFlag;
+    const isDisabledProctoredExams = specialExamsEnabledWaffleFlag && sequenceStatus === 'loaded'
+      && sequence.isProctored && !proctoredExamsEnabledWaffleFlag;
     if (!specialExamsEnabledWaffleFlag || isDisabledProctoredExams) {
       checkSpecialExamRedirect(sequenceStatus, sequence);
     }
