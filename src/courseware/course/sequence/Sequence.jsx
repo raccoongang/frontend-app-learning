@@ -143,72 +143,75 @@ const Sequence = ({
     history.push(`/course/${courseId}/course-end`);
   };
 
-  const defaultContent = (
-    <div className="sequence-container d-inline-flex flex-row">
-      <div className={classNames('sequence w-100', { 'position-relative': shouldDisplayNotificationTriggerInSequence })}>
-        <SequenceNavigation
-          sequenceId={sequenceId}
-          unitId={unitId}
-          className="mb-4"
-          nextSequenceHandler={() => {
-            logEvent('edx.ui.lms.sequence.next_selected', 'top');
-            handleNext();
-          }}
-          onNavigate={(destinationUnitId) => {
-            logEvent('edx.ui.lms.sequence.tab_selected', 'top', destinationUnitId);
-            handleNavigate(destinationUnitId);
-          }}
-          previousSequenceHandler={() => {
-            logEvent('edx.ui.lms.sequence.previous_selected', 'top');
-            handlePrevious();
-          }}
-          goToCourseExitPage={() => goToCourseExitPage()}
-        />
-        {shouldDisplayNotificationTriggerInSequence && <SidebarTriggers />}
+  const navigation = (
+    <SequenceNavigation
+      sequenceId={sequenceId}
+      unitId={unitId}
+      className="mb-4"
+      nextSequenceHandler={() => {
+        logEvent('edx.ui.lms.sequence.next_selected', 'top');
+        handleNext();
+      }}
+      onNavigate={(destinationUnitId) => {
+        logEvent('edx.ui.lms.sequence.tab_selected', 'top', destinationUnitId);
+        handleNavigate(destinationUnitId);
+      }}
+      previousSequenceHandler={() => {
+        logEvent('edx.ui.lms.sequence.previous_selected', 'top');
+        handlePrevious();
+      }}
+      goToCourseExitPage={() => goToCourseExitPage()}
+    />
+  );
 
-        <div className="unit-container flex-grow-1">
-          <SequenceContent
-            courseId={courseId}
-            gated={gated}
-            sequenceId={sequenceId}
-            unitId={unitId}
-            unitLoadedHandler={handleUnitLoaded}
-          />
-          {unitHasLoaded && (
-          <UnitNavigation
-            sequenceId={sequenceId}
-            unitId={unitId}
-            onClickPrevious={() => {
-              logEvent('edx.ui.lms.sequence.previous_selected', 'bottom');
-              handlePrevious();
-            }}
-            onClickNext={() => {
-              logEvent('edx.ui.lms.sequence.next_selected', 'bottom');
-              handleNext();
-            }}
-            goToCourseExitPage={() => goToCourseExitPage()}
-          />
-          )}
-        </div>
-      </div>
-      <Sidebar />
+  const defaultContent = (
+    <div className="w-100 unit-container flex-grow-1">
+      <SequenceContent
+        courseId={courseId}
+        gated={gated}
+        sequenceId={sequenceId}
+        unitId={unitId}
+        unitLoadedHandler={handleUnitLoaded}
+      />
+      {unitHasLoaded && (
+      <UnitNavigation
+        sequenceId={sequenceId}
+        unitId={unitId}
+        onClickPrevious={() => {
+          logEvent('edx.ui.lms.sequence.previous_selected', 'bottom');
+          handlePrevious();
+        }}
+        onClickNext={() => {
+          logEvent('edx.ui.lms.sequence.next_selected', 'bottom');
+          handleNext();
+        }}
+        goToCourseExitPage={() => goToCourseExitPage()}
+      />
+      )}
     </div>
   );
 
   if (sequenceStatus === 'loaded') {
     return (
-      <div>
-        <SequenceExamWrapper
-          sequence={sequence}
-          courseId={courseId}
-          isStaff={isStaff}
-          originalUserIsStaff={originalUserIsStaff}
-          canAccessProctoredExams={course.canAccessProctoredExams}
-        >
-          {defaultContent}
-        </SequenceExamWrapper>
+      <>
+        <div className="sequence-container d-inline-flex flex-row">
+          <div className={classNames('sequence w-100', { 'position-relative': shouldDisplayNotificationTriggerInSequence })}>
+            {navigation}
+            {shouldDisplayNotificationTriggerInSequence && <SidebarTriggers />}
+            <SequenceExamWrapper
+              sequence={sequence}
+              courseId={courseId}
+              isStaff={isStaff}
+              originalUserIsStaff={originalUserIsStaff}
+              canAccessProctoredExams={course.canAccessProctoredExams}
+            >
+              {defaultContent}
+            </SequenceExamWrapper>
+          </div>
+          <Sidebar />
+        </div>
         <CourseLicense license={course.license || undefined} />
-      </div>
+      </>
     );
   }
 
