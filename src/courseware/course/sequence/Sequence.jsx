@@ -1,10 +1,7 @@
 /* eslint-disable no-use-before-define */
-import React, {
-  useEffect, useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import {
   sendTrackEvent,
   sendTrackingLogEvent,
@@ -12,7 +9,6 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import SequenceExamWrapper from '@edx/frontend-lib-special-exams';
-import { breakpoints, useWindowSize } from '@openedx/paragon';
 
 import PageLoading from '../../../generic/PageLoading';
 import { useModel } from '../../../generic/model-store';
@@ -22,8 +18,7 @@ import CourseLicense from '../course-license';
 import Sidebar from '../sidebar/Sidebar';
 import NewSidebar from '../new-sidebar/Sidebar';
 import { LAYOUT_RIGHT, LAYOUT_LEFT } from '../sidebar/common/constants';
-import SidebarTriggers from '../sidebar/SidebarTriggers';
-import NewSidebarTriggers from '../new-sidebar/SidebarTriggers';
+import { Trigger as CourseOutlineTrigger } from '../sidebar/sidebars/course-outline';
 import messages from './messages';
 import HiddenAfterDue from './hidden-after-due';
 import { SequenceNavigation, UnitNavigation } from './sequence-navigation';
@@ -47,7 +42,6 @@ const Sequence = ({
   const unit = useModel('units', unitId);
   const sequenceStatus = useSelector(state => state.courseware.sequenceStatus);
   const sequenceMightBeUnit = useSelector(state => state.courseware.sequenceMightBeUnit);
-  const shouldDisplayNotificationTriggerInSequence = useWindowSize().width < breakpoints.small.minWidth;
   const enableNewSidebar = getConfig().ENABLE_NEW_SIDEBAR;
 
   const handleNext = () => {
@@ -145,58 +139,53 @@ const Sequence = ({
   const gated = sequence && sequence.gatedContent !== undefined && sequence.gatedContent.gated;
 
   const defaultContent = (
-    <div>
-      <SequenceNavigation
-        sequenceId={sequenceId}
-        unitId={unitId}
-        className="mb-4"
-        nextHandler={() => {
-          logEvent('edx.ui.lms.sequence.next_selected', 'top');
-          handleNext();
-        }}
-        onNavigate={(destinationUnitId) => {
-          logEvent('edx.ui.lms.sequence.tab_selected', 'top', destinationUnitId);
-          handleNavigate(destinationUnitId);
-        }}
-        previousHandler={() => {
-          logEvent('edx.ui.lms.sequence.previous_selected', 'top');
-          handlePrevious();
-        }}
-      />
-      <div className="sequence-container d-inline-flex flex-row">
-        <Sidebar layout={LAYOUT_LEFT} />
-        <div className={classNames('sequence w-100 pt-3', { 'position-relative': shouldDisplayNotificationTriggerInSequence })}>
+    <div className="sequence-container d-inline-flex flex-row align-items-start">
+      <CourseOutlineTrigger />
+      <Sidebar layout={LAYOUT_LEFT} />
+      <div className="sequence w-100">
+        <SequenceNavigation
+          sequenceId={sequenceId}
+          unitId={unitId}
+          className="mb-4"
+          nextHandler={() => {
+            logEvent('edx.ui.lms.sequence.next_selected', 'top');
+            handleNext();
+          }}
+          onNavigate={(destinationUnitId) => {
+            logEvent('edx.ui.lms.sequence.tab_selected', 'top', destinationUnitId);
+            handleNavigate(destinationUnitId);
+          }}
+          previousHandler={() => {
+            logEvent('edx.ui.lms.sequence.previous_selected', 'top');
+            handlePrevious();
+          }}
+        />
 
-          {shouldDisplayNotificationTriggerInSequence && (
-            enableNewSidebar === 'true' ? <NewSidebarTriggers /> : <SidebarTriggers />
-          )}
-
-          <div className="unit-container flex-grow-1">
-            <SequenceContent
-              courseId={courseId}
-              gated={gated}
+        <div className="unit-container flex-grow-1">
+          <SequenceContent
+            courseId={courseId}
+            gated={gated}
+            sequenceId={sequenceId}
+            unitId={unitId}
+            unitLoadedHandler={handleUnitLoaded}
+          />
+          {unitHasLoaded && (
+            <UnitNavigation
               sequenceId={sequenceId}
               unitId={unitId}
-              unitLoadedHandler={handleUnitLoaded}
+              onClickPrevious={() => {
+                logEvent('edx.ui.lms.sequence.previous_selected', 'bottom');
+                handlePrevious();
+              }}
+              onClickNext={() => {
+                logEvent('edx.ui.lms.sequence.next_selected', 'bottom');
+                handleNext();
+              }}
             />
-            {unitHasLoaded && (
-              <UnitNavigation
-                sequenceId={sequenceId}
-                unitId={unitId}
-                onClickPrevious={() => {
-                  logEvent('edx.ui.lms.sequence.previous_selected', 'bottom');
-                  handlePrevious();
-                }}
-                onClickNext={() => {
-                  logEvent('edx.ui.lms.sequence.next_selected', 'bottom');
-                  handleNext();
-                }}
-              />
-            )}
-          </div>
+          )}
         </div>
-        {enableNewSidebar === 'true' ? <NewSidebar /> : <Sidebar layout={LAYOUT_RIGHT} />}
       </div>
+      {enableNewSidebar === 'true' ? <NewSidebar /> : <Sidebar layout={LAYOUT_RIGHT} />}
     </div>
   );
 
