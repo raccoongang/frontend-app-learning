@@ -21,6 +21,7 @@ import { useSequenceBannerTextAlert, useSequenceEntranceExamAlert } from '../../
 import CourseLicense from '../course-license';
 import Sidebar from '../sidebar/Sidebar';
 import NewSidebar from '../new-sidebar/Sidebar';
+import { LAYOUT_RIGHT, LAYOUT_LEFT } from '../sidebar/common/constants';
 import SidebarTriggers from '../sidebar/SidebarTriggers';
 import NewSidebarTriggers from '../new-sidebar/SidebarTriggers';
 import messages from './messages';
@@ -144,54 +145,58 @@ const Sequence = ({
   const gated = sequence && sequence.gatedContent !== undefined && sequence.gatedContent.gated;
 
   const defaultContent = (
-    <div className="sequence-container d-inline-flex flex-row">
-      <div className={classNames('sequence w-100', { 'position-relative': shouldDisplayNotificationTriggerInSequence })}>
-        <SequenceNavigation
-          sequenceId={sequenceId}
-          unitId={unitId}
-          className="mb-4"
-          nextHandler={() => {
-            logEvent('edx.ui.lms.sequence.next_selected', 'top');
-            handleNext();
-          }}
-          onNavigate={(destinationUnitId) => {
-            logEvent('edx.ui.lms.sequence.tab_selected', 'top', destinationUnitId);
-            handleNavigate(destinationUnitId);
-          }}
-          previousHandler={() => {
-            logEvent('edx.ui.lms.sequence.previous_selected', 'top');
-            handlePrevious();
-          }}
-        />
-        {shouldDisplayNotificationTriggerInSequence && (
-          enableNewSidebar === 'true' ? <NewSidebarTriggers /> : <SidebarTriggers />
-        )}
+    <div>
+      <SequenceNavigation
+        sequenceId={sequenceId}
+        unitId={unitId}
+        className="mb-4"
+        nextHandler={() => {
+          logEvent('edx.ui.lms.sequence.next_selected', 'top');
+          handleNext();
+        }}
+        onNavigate={(destinationUnitId) => {
+          logEvent('edx.ui.lms.sequence.tab_selected', 'top', destinationUnitId);
+          handleNavigate(destinationUnitId);
+        }}
+        previousHandler={() => {
+          logEvent('edx.ui.lms.sequence.previous_selected', 'top');
+          handlePrevious();
+        }}
+      />
+      <div className="sequence-container d-inline-flex flex-row">
+        <Sidebar layout={LAYOUT_LEFT} />
+        <div className={classNames('sequence w-100 pt-3', { 'position-relative': shouldDisplayNotificationTriggerInSequence })}>
 
-        <div className="unit-container flex-grow-1">
-          <SequenceContent
-            courseId={courseId}
-            gated={gated}
-            sequenceId={sequenceId}
-            unitId={unitId}
-            unitLoadedHandler={handleUnitLoaded}
-          />
-          {unitHasLoaded && (
-          <UnitNavigation
-            sequenceId={sequenceId}
-            unitId={unitId}
-            onClickPrevious={() => {
-              logEvent('edx.ui.lms.sequence.previous_selected', 'bottom');
-              handlePrevious();
-            }}
-            onClickNext={() => {
-              logEvent('edx.ui.lms.sequence.next_selected', 'bottom');
-              handleNext();
-            }}
-          />
+          {shouldDisplayNotificationTriggerInSequence && (
+            enableNewSidebar === 'true' ? <NewSidebarTriggers /> : <SidebarTriggers />
           )}
+
+          <div className="unit-container flex-grow-1">
+            <SequenceContent
+              courseId={courseId}
+              gated={gated}
+              sequenceId={sequenceId}
+              unitId={unitId}
+              unitLoadedHandler={handleUnitLoaded}
+            />
+            {unitHasLoaded && (
+            <UnitNavigation
+              sequenceId={sequenceId}
+              unitId={unitId}
+              onClickPrevious={() => {
+                logEvent('edx.ui.lms.sequence.previous_selected', 'bottom');
+                handlePrevious();
+              }}
+              onClickNext={() => {
+                logEvent('edx.ui.lms.sequence.next_selected', 'bottom');
+                handleNext();
+              }}
+            />
+            )}
+          </div>
         </div>
+        {enableNewSidebar === 'true' ? <NewSidebar /> : <Sidebar layout={LAYOUT_RIGHT} />}
       </div>
-      {enableNewSidebar === 'true' ? <NewSidebar /> : <Sidebar />}
     </div>
   );
 
