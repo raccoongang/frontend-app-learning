@@ -180,18 +180,18 @@ const Sequence = ({
               unitLoadedHandler={handleUnitLoaded}
             />
             {unitHasLoaded && (
-            <UnitNavigation
-              sequenceId={sequenceId}
-              unitId={unitId}
-              onClickPrevious={() => {
-                logEvent('edx.ui.lms.sequence.previous_selected', 'bottom');
-                handlePrevious();
-              }}
-              onClickNext={() => {
-                logEvent('edx.ui.lms.sequence.next_selected', 'bottom');
-                handleNext();
-              }}
-            />
+              <UnitNavigation
+                sequenceId={sequenceId}
+                unitId={unitId}
+                onClickPrevious={() => {
+                  logEvent('edx.ui.lms.sequence.previous_selected', 'bottom');
+                  handlePrevious();
+                }}
+                onClickNext={() => {
+                  logEvent('edx.ui.lms.sequence.next_selected', 'bottom');
+                  handleNext();
+                }}
+              />
             )}
           </div>
         </div>

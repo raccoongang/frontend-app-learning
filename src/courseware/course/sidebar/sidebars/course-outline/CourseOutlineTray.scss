@@ -8,7 +8,7 @@
         line-height: 1.25rem;
 
         .collapsible-trigger {
-            padding: .625rem 1rem;
+            padding: .625rem $spacer;
             position: relative;
 
             @media (max-width: -1 + map-get($grid-breakpoints, "xs")) {
@@ -27,7 +27,7 @@
 
         ol li {
             border-left: 5px solid transparent !important;
-            padding: 1rem .625rem;
+            padding: $spacer .625rem;
 
             &.active-sequence {
                 border-left: 5px solid $brand !important;
