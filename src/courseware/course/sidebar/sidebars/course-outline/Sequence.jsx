@@ -80,7 +80,7 @@ const Sequence = ({
         styling="card-lg"
         title={sectionTitle}
         open={open}
-        onToggle={() => { setOpen(!open); }}
+        onToggle={() => setOpen(!open)}
       >
         <ol className="list-unstyled">
           {unitIds.map((unitId, index) => (

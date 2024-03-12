@@ -18,7 +18,7 @@ const Section = ({ intl, section, handleSelectSection }) => {
 
   const sectionTitle = (
     <>
-      <div className="col-auto p-0" style={{ fontSize: '1.1rem' }}>
+      <div className="col-auto p-0">
         {complete ? <CheckCircleIcon className="text-success" /> : <CompletionSolidIcon />}
       </div>
       <div className="col-auto ml-3 p-0 flex-grow-1 text-dark-500 text-left">

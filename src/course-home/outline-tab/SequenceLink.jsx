@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
@@ -93,7 +92,7 @@ const SequenceLink = ({
                 icon={fasCheckCircle}
                 fixedWidth
                 className="float-left text-success mt-1"
-                aria-hidden="true"
+                aria-hidden={complete}
                 title={intl.formatMessage(messages.completedAssignment)}
               />
             ) : (
@@ -101,7 +100,7 @@ const SequenceLink = ({
                 icon={farCheckCircle}
                 fixedWidth
                 className="float-left text-gray-400 mt-1"
-                aria-hidden="true"
+                aria-hidden={complete}
                 title={intl.formatMessage(messages.incompleteAssignment)}
               />
             )}

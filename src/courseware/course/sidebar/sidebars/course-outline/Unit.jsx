@@ -42,7 +42,7 @@ const Unit = ({
   return (
     <li className={classNames({ 'bg-info-100': isActive, 'border-top border-light': !first })}>
       <div className="row w-100 m-0 d-flex align-items-center">
-        <div className="col-auto p-0" style={{ fontSize: '18px' }}>
+        <div className="col-auto p-0">
           {getDisplayIcon()}
         </div>
         <div className="col-10 p-0 ml-3 text-break">
