@@ -7,6 +7,8 @@ import React, {
 import { useModel } from '../../../generic/model-store';
 import { getLocalStorage, setLocalStorage } from '../../../data/localStorage';
 
+import * as courseOutline from './sidebars/course-outline';
+import * as discussions from './sidebars/discussions';
 import SidebarContext from './SidebarContext';
 import { SIDEBARS } from './sidebars';
 
@@ -18,8 +20,13 @@ const SidebarProvider = ({
   const { verifiedMode } = useModel('courseHomeMeta', courseId);
   const shouldDisplayFullScreen = useWindowSize().width < breakpoints.extraLarge.minWidth;
   const shouldDisplaySidebarOpen = useWindowSize().width > breakpoints.extraLarge.minWidth;
+  const hasSavedCourseOutlineSidebarState = window.sessionStorage.getItem('showCourseOutlineSidebar');
   const query = new URLSearchParams(window.location.search);
-  const initialSidebar = (shouldDisplaySidebarOpen || query.get('sidebar') === 'true') ? SIDEBARS.DISCUSSIONS.ID : null;
+  const isInitiallySidebarOpen = shouldDisplaySidebarOpen || query.get('sidebar') === 'true';
+  const defaultSidebarID = hasSavedCourseOutlineSidebarState
+    ? SIDEBARS[courseOutline.ID].ID
+    : SIDEBARS[discussions.ID].ID;
+  const initialSidebar = isInitiallySidebarOpen ? defaultSidebarID : null;
   const [currentSidebar, setCurrentSidebar] = useState(initialSidebar);
   const [notificationStatus, setNotificationStatus] = useState(getLocalStorage(`notificationStatus.${courseId}`));
   const [upgradeNotificationCurrentState, setUpgradeNotificationCurrentState] = useState(getLocalStorage(`upgradeNotificationCurrentState.${courseId}`));
