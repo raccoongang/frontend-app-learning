@@ -1,5 +1,6 @@
+import { useContext } from 'react';
 import classNames from 'classnames';
-import React, { useContext } from 'react';
+
 import SidebarContext from './SidebarContext';
 import { SIDEBAR_ORDER, SIDEBARS } from './sidebars';
 
@@ -15,7 +16,7 @@ const SidebarTriggers = () => {
         const isActive = sidebarId === currentSidebar;
         return (
           <div
-            className={classNames('mt-3 ml-1', { 'border-primary-700': isActive })}
+            className={classNames('ml-1', { 'border-primary-700 sidebar-active': isActive })}
             style={{ borderBottom: isActive ? '2px solid' : null }}
             key={sidebarId}
           >

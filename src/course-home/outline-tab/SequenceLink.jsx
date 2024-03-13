@@ -1,4 +1,3 @@
-import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
@@ -12,7 +11,6 @@ import { faCheckCircle as fasCheckCircle } from '@fortawesome/free-solid-svg-ico
 import { faCheckCircle as farCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import SidebarContext from '../../courseware/course/sidebar/SidebarContext';
 import EffortEstimate from '../../shared/effort-estimate';
 import { useModel } from '../../generic/model-store';
 import messages from './messages';
@@ -23,8 +21,6 @@ const SequenceLink = ({
   courseId,
   first,
   sequence,
-  isActive,
-  hasActiveSection,
 }) => {
   const {
     complete,
@@ -37,16 +33,9 @@ const SequenceLink = ({
     userTimezone,
   } = useModel('outline', courseId);
 
-  const { toggleSidebar, shouldDisplaySidebarOpen } = useContext(SidebarContext);
-  const handleSequenceClick = () => {
-    if (toggleSidebar !== undefined && !shouldDisplaySidebarOpen) {
-      toggleSidebar(null);
-    }
-  };
-
   const timezoneFormatArgs = userTimezone ? { timeZone: userTimezone } : {};
 
-  const coursewareUrl = <Link to={`/course/${courseId}/${id}`} onClick={handleSequenceClick}>{title}</Link>;
+  const coursewareUrl = <Link to={`/course/${courseId}/${id}`}>{title}</Link>;
   const displayTitle = showLink ? coursewareUrl : title;
 
   const dueDateMessage = (
@@ -94,43 +83,41 @@ const SequenceLink = ({
   );
 
   return (
-    <li className={classNames({ 'active-sequence': isActive, 'border-top border-light': !first })}>
-      <div className="row w-100 m-0 d-flex align-items-center">
-        <div className="col-auto p-0" style={{ fontSize: '18px' }}>
-          {complete ? (
-            <FontAwesomeIcon
-              icon={fasCheckCircle}
-              fixedWidth
-              className="float-left text-success mt-1"
-              aria-hidden="true"
-              title={intl.formatMessage(messages.completedAssignment)}
-            />
-          ) : (
-            <FontAwesomeIcon
-              icon={farCheckCircle}
-              fixedWidth
-              className="float-left text-gray-400 mt-1"
-              aria-hidden="true"
-              title={intl.formatMessage(messages.incompleteAssignment)}
-            />
-          )}
+    <li>
+      <div className={classNames('', { 'mt-2 pt-2 border-top border-light': !first })}>
+        <div className="row w-100 m-0">
+          <div className="col-auto p-0">
+            {complete ? (
+              <FontAwesomeIcon
+                icon={fasCheckCircle}
+                fixedWidth
+                className="float-left text-success mt-1"
+                aria-hidden={complete}
+                title={intl.formatMessage(messages.completedAssignment)}
+              />
+            ) : (
+              <FontAwesomeIcon
+                icon={farCheckCircle}
+                fixedWidth
+                className="float-left text-gray-400 mt-1"
+                aria-hidden={complete}
+                title={intl.formatMessage(messages.incompleteAssignment)}
+              />
+            )}
+          </div>
+          <div className="col-10 p-0 ml-3 text-break">
+            <span className="align-middle">{displayTitle}</span>
+            <span className="sr-only">
+              , {intl.formatMessage(complete ? messages.completedAssignment : messages.incompleteAssignment)}
+            </span>
+            <EffortEstimate className="ml-3 align-middle" block={sequence} />
+          </div>
         </div>
-        <div className="col-10 p-0 ml-3 text-break">
-          <span
-            className={classNames('align-middle', { 'contained-in-active-section': hasActiveSection })}
-          >
-            {displayTitle}
-          </span>
-          <span className="sr-only">
-            , {intl.formatMessage(complete ? messages.completedAssignment : messages.incompleteAssignment)}
-          </span>
-          <EffortEstimate className="ml-3 align-middle" block={sequence} />
+        <div className="row w-100 m-0 ml-3 pl-3">
+          <small className="text-body pl-2">
+            {due ? dueDateMessage : noDueDateMessage}
+          </small>
         </div>
-      </div>
-      <div className="row w-100 m-0 ml-3 pl-3">
-        <small className="text-body pl-2">
-          {due ? dueDateMessage : noDueDateMessage}
-        </small>
       </div>
     </li>
   );
@@ -142,13 +129,6 @@ SequenceLink.propTypes = {
   courseId: PropTypes.string.isRequired,
   first: PropTypes.bool.isRequired,
   sequence: PropTypes.shape().isRequired,
-  isActive: PropTypes.bool,
-  hasActiveSection: PropTypes.bool,
-};
-
-SequenceLink.defaultProps = {
-  isActive: false,
-  hasActiveSection: false,
 };
 
 export default injectIntl(SequenceLink);
