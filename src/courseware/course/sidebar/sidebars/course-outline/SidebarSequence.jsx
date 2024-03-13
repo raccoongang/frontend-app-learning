@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ import { useModel } from '../../../../../generic/model-store';
 import courseOutlineMessages from '../../../../../course-home/outline-tab/messages';
 import { getSequenceId } from '../../../../data/selectors';
 import { CompletionSolidIcon } from './icons';
-import Unit from './Unit';
+import SidebarUnit from './SidebarUnit';
 
 const MOCKED_UNIT_IDS = ['123', '456', '789']; // ToDo: should be refactored after API is ready
 const MOCKED_UNITS = {
@@ -31,7 +31,7 @@ const MOCKED_UNITS = {
   },
 }; // ToDo: should be refactored after API is ready
 
-const Sequence = ({
+const SidebarSequence = ({
   courseId,
   defaultOpen,
   intl,
@@ -49,12 +49,6 @@ const Sequence = ({
   } = useModel('outline', courseId);
 
   const [open, setOpen] = useState(defaultOpen);
-
-  useEffect(() => {
-    setOpen(defaultOpen);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const activeSequenceId = useSelector(getSequenceId);
 
   const sectionTitle = (
@@ -84,7 +78,7 @@ const Sequence = ({
       >
         <ol className="list-unstyled">
           {unitIds.map((unitId, index) => (
-            <Unit
+            <SidebarUnit
               key={unitId}
               id={unitId}
               courseId={courseId}
@@ -99,11 +93,11 @@ const Sequence = ({
   );
 };
 
-Sequence.propTypes = {
+SidebarSequence.propTypes = {
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
   defaultOpen: PropTypes.bool.isRequired,
   sequence: PropTypes.shape().isRequired,
 };
 
-export default injectIntl(Sequence);
+export default injectIntl(SidebarSequence);

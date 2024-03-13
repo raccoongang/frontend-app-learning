@@ -121,9 +121,9 @@ describe('Course', () => {
 
     const notificationTrigger = screen.getByRole('button', { name: /Show notification tray/i });
     expect(notificationTrigger).toBeInTheDocument();
-    expect(notificationTrigger.parentNode).not.toHaveClass('ml-1 border-primary-700', { exact: true });
+    expect(notificationTrigger.parentNode).not.toHaveClass('sidebar-active', { exact: true });
     fireEvent.click(notificationTrigger);
-    expect(notificationTrigger.parentNode).toHaveClass('ml-1 border-primary-700');
+    expect(notificationTrigger.parentNode).toHaveClass('sidebar-active');
   });
 
   it('handles click to open/close discussions sidebar', async () => {

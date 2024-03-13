@@ -15,8 +15,8 @@ import PageLoading from '../../../../../generic/PageLoading';
 import { getSequenceId, getCourseStatus } from '../../../../data/selectors';
 import SidebarContext from '../../SidebarContext';
 import { ID } from './CourseOutlineTrigger';
-import Section from './Section';
-import Sequence from './Sequence';
+import SidebarSection from './SidebarSection';
+import SidebarSequence from './SidebarSequence';
 import messages from './messages';
 
 const CourseOutlineTray = ({ intl }) => {
@@ -105,7 +105,7 @@ const CourseOutlineTray = ({ intl }) => {
       <ol id="outline-sidebar-outline" className="list-unstyled">
         {isDisplaySequenceLevel
           ? sequenceIds.map((sequenceId) => (
-            <Sequence
+            <SidebarSequence
               key={sequenceId}
               courseId={courseId}
               sequence={courseBlocks.sequences[sequenceId]}
@@ -113,7 +113,7 @@ const CourseOutlineTray = ({ intl }) => {
             />
           ))
           : sectionsIds.map((sectionId) => (
-            <Section
+            <SidebarSection
               key={sectionId}
               courseId={courseId}
               section={courseBlocks.sections[sectionId]}

@@ -11,7 +11,7 @@ import messages from './messages';
 
 const MOCKED_TYPE = 'problem'; // ToDo: should be refactored after API is ready
 
-const Unit = ({
+const SidebarUnit = ({
   id,
   intl,
   courseId,
@@ -58,7 +58,7 @@ const Unit = ({
   );
 };
 
-Unit.propTypes = {
+SidebarUnit.propTypes = {
   id: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
@@ -67,8 +67,8 @@ Unit.propTypes = {
   isActive: PropTypes.bool,
 };
 
-Unit.defaultProps = {
+SidebarUnit.defaultProps = {
   isActive: false,
 };
 
-export default injectIntl(Unit);
+export default injectIntl(SidebarUnit);

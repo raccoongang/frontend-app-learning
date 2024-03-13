@@ -9,7 +9,7 @@ import {
 import courseOutlineMessages from '../../../../../course-home/outline-tab/messages';
 import { CompletionSolidIcon } from './icons';
 
-const Section = ({ intl, section, handleSelectSection }) => {
+const SidebarSection = ({ intl, section, handleSelectSection }) => {
   const {
     id,
     complete,
@@ -46,10 +46,10 @@ const Section = ({ intl, section, handleSelectSection }) => {
   );
 };
 
-Section.propTypes = {
+SidebarSection.propTypes = {
   intl: intlShape.isRequired,
   section: PropTypes.shape().isRequired,
   handleSelectSection: PropTypes.func.isRequired,
 };
 
-export default injectIntl(Section);
+export default injectIntl(SidebarSection);
