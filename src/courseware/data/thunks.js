@@ -8,6 +8,7 @@ import {
   getCourseDiscussionConfig,
   getCourseMetadata, getCourseOutline,
   getCourseTopics,
+  getCoursewareOutlineSidebarEnabledFlag,
   getLearningSequencesOutline,
   getSequenceMetadata,
   postIntegritySignature,
@@ -24,6 +25,7 @@ import {
   fetchCourseOutlineRequest,
   fetchCourseOutlineSuccess,
   fetchCourseOutlineFailure,
+  setCoursewareOutlineSidebarSettings,
 } from './slice';
 
 export function fetchCourse(courseId) {
@@ -33,18 +35,25 @@ export function fetchCourse(courseId) {
       getCourseMetadata(courseId),
       getLearningSequencesOutline(courseId),
       getCourseHomeCourseMetadata(courseId, 'courseware'),
+      getCoursewareOutlineSidebarEnabledFlag(courseId),
     ]).then(([
       courseMetadataResult,
       learningSequencesOutlineResult,
-      courseHomeMetadataResult]) => {
-      if (courseMetadataResult.status === 'fulfilled') {
+      courseHomeMetadataResult,
+      courseOutlineSidebarDisableFlagResult]) => {
+      const fetchedMetadata = courseMetadataResult.status === 'fulfilled';
+      const fetchedCourseHomeMetadata = courseHomeMetadataResult.status === 'fulfilled';
+      const fetchedOutline = learningSequencesOutlineResult.status === 'fulfilled';
+      const fetchedOutlineSidebarEnableFlag = courseOutlineSidebarDisableFlagResult.status === 'fulfilled';
+
+      if (fetchedMetadata) {
         dispatch(addModel({
           modelType: 'coursewareMeta',
           model: courseMetadataResult.value,
         }));
       }
 
-      if (courseHomeMetadataResult.status === 'fulfilled') {
+      if (fetchedCourseHomeMetadata) {
         dispatch(addModel({
           modelType: 'courseHomeMeta',
           model: {
@@ -54,7 +63,7 @@ export function fetchCourse(courseId) {
         }));
       }
 
-      if (learningSequencesOutlineResult.status === 'fulfilled') {
+      if (fetchedOutline) {
         const {
           courses, sections, sequences,
         } = learningSequencesOutlineResult.value;
@@ -75,9 +84,11 @@ export function fetchCourse(courseId) {
         }));
       }
 
-      const fetchedMetadata = courseMetadataResult.status === 'fulfilled';
-      const fetchedCourseHomeMetadata = courseHomeMetadataResult.status === 'fulfilled';
-      const fetchedOutline = learningSequencesOutlineResult.status === 'fulfilled';
+      if (fetchedOutlineSidebarEnableFlag) {
+        dispatch(setCoursewareOutlineSidebarSettings({
+          enabled: courseOutlineSidebarDisableFlagResult.value.enabled,
+        }));
+      }
 
       // Log errors for each request if needed. Outline failures may occur
       // even if the course metadata request is successful
@@ -96,6 +107,9 @@ export function fetchCourse(courseId) {
       }
       if (!fetchedCourseHomeMetadata) {
         logError(courseHomeMetadataResult.reason);
+      }
+      if (!fetchedOutlineSidebarEnableFlag) {
+        logError(courseOutlineSidebarDisableFlagResult.reason);
       }
       if (fetchedMetadata && fetchedCourseHomeMetadata) {
         if (courseHomeMetadataResult.value.courseAccess.hasAccess && fetchedOutline) {
