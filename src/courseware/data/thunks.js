@@ -6,7 +6,8 @@ import {
 import {
   getBlockCompletion,
   getCourseDiscussionConfig,
-  getCourseMetadata, getCourseOutline,
+  getCourseMetadata,
+  getCourseOutline,
   getCourseTopics,
   getCoursewareOutlineSidebarEnabledFlag,
   getLearningSequencesOutline,
