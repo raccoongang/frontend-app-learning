@@ -14,24 +14,33 @@ import {
   VideocamIcon,
 } from './icons';
 
+export const UNIT_ICON_TYPES = {
+  video: 'video',
+  problem: 'problem',
+  vertical: 'vertical',
+  lock: 'lock',
+  other: 'other',
+};
+
 const UnitIcon = ({ type, isCompleted, ...props }) => {
-  let Icon;
-  switch (type) {
-    case 'video':
-      Icon = isCompleted ? VideocamCompleteIcon : VideocamIcon;
-      break;
-    case 'problem':
-      Icon = isCompleted ? EditSquareCompleteIcon : EditSquareIcon;
-      break;
-    case 'vertical':
-      Icon = ArticleIcon;
-      break;
-    case 'lock':
-      Icon = LockedIcon;
-      break;
-    default:
-      Icon = isCompleted ? BookCompleteIcon : BookIcon;
-  }
+  const iconMap = {
+    [UNIT_ICON_TYPES.video]: {
+      default: VideocamIcon,
+      complete: VideocamCompleteIcon,
+    },
+    [UNIT_ICON_TYPES.problem]: {
+      default: EditSquareIcon,
+      complete: EditSquareCompleteIcon,
+    },
+    [UNIT_ICON_TYPES.vertical]: ArticleIcon,
+    [UNIT_ICON_TYPES.lock]: LockedIcon,
+    [UNIT_ICON_TYPES.other]: {
+      default: BookIcon,
+      complete: BookCompleteIcon,
+    },
+  };
+
+  const Icon = iconMap[type]?.[isCompleted ? 'complete' : 'default'];
 
   return (
     <Icon {...props} className={classNames({ 'text-success': isCompleted, 'text-gray-700': !isCompleted })} />
@@ -39,7 +48,7 @@ const UnitIcon = ({ type, isCompleted, ...props }) => {
 };
 
 UnitIcon.propTypes = {
-  type: PropTypes.oneOf(['video', 'other', 'vertical', 'problem', 'lock']).isRequired,
+  type: PropTypes.oneOf(Object.keys(UNIT_ICON_TYPES)).isRequired,
   isCompleted: PropTypes.bool.isRequired,
 };
 

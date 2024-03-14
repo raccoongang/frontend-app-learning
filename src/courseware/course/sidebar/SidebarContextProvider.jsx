@@ -7,8 +7,8 @@ import React, {
 import { useModel } from '../../../generic/model-store';
 import { getLocalStorage, setLocalStorage } from '../../../data/localStorage';
 
-import * as courseOutline from './sidebars/course-outline';
-import * as discussions from './sidebars/discussions';
+import * as courseOutlineSidebar from './sidebars/course-outline';
+import * as discussionsSidebar from './sidebars/discussions';
 import SidebarContext from './SidebarContext';
 import { SIDEBARS } from './sidebars';
 
@@ -24,8 +24,8 @@ const SidebarProvider = ({
   const query = new URLSearchParams(window.location.search);
   const isInitiallySidebarOpen = shouldDisplaySidebarOpen || query.get('sidebar') === 'true';
   const defaultSidebarID = hasSavedCourseOutlineSidebarState
-    ? SIDEBARS[courseOutline.ID].ID
-    : SIDEBARS[discussions.ID].ID;
+    ? SIDEBARS[courseOutlineSidebar.ID].ID
+    : SIDEBARS[discussionsSidebar.ID].ID;
   const initialSidebar = isInitiallySidebarOpen ? defaultSidebarID : null;
   const [currentSidebar, setCurrentSidebar] = useState(initialSidebar);
   const [notificationStatus, setNotificationStatus] = useState(getLocalStorage(`notificationStatus.${courseId}`));
