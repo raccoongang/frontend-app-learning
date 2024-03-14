@@ -76,7 +76,12 @@ SidebarSequence.propTypes = {
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
   defaultOpen: PropTypes.bool.isRequired,
-  sequence: PropTypes.shape().isRequired,
+  sequence: PropTypes.shape({
+    complete: PropTypes.bool,
+    id: PropTypes.string,
+    title: PropTypes.string,
+    unitIds: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
   activeUnitId: PropTypes.string.isRequired,
 };
 
