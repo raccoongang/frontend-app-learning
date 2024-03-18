@@ -139,7 +139,7 @@ const Sequence = ({
   const gated = sequence && sequence.gatedContent !== undefined && sequence.gatedContent.gated;
 
   const defaultContent = (
-    <div className="sequence-container d-inline-flex flex-row align-items-start w-100">
+    <div className="sequence-container d-inline-flex flex-row w-100">
       <CourseOutlineTrigger />
       <Sidebar layout={LAYOUT_LEFT} />
       <div className="sequence w-100">

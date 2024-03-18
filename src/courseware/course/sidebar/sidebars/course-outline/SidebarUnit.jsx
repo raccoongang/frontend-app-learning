@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-import UnitIcon from './UnitIcon';
+import UnitIcon, { UNIT_ICON_TYPES } from './UnitIcon';
 import messages from './messages';
 
 const SidebarUnit = ({
@@ -18,7 +18,7 @@ const SidebarUnit = ({
   const {
     complete,
     title,
-    icon,
+    icon = UNIT_ICON_TYPES.other,
   } = unit;
 
   return (
