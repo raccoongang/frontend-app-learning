@@ -1,11 +1,13 @@
 import { breakpoints, useWindowSize } from '@openedx/paragon';
 import PropTypes from 'prop-types';
-import React, {
+import { useSelector } from 'react-redux';
+import {
   useEffect, useState, useMemo, useCallback,
 } from 'react';
 
 import { useModel } from '../../../generic/model-store';
 import { getLocalStorage, setLocalStorage } from '../../../data/localStorage';
+import { getDiscussionsSidebarSettings } from '../../data/selectors';
 
 import * as courseOutlineSidebar from './sidebars/course-outline';
 import * as discussionsSidebar from './sidebars/discussions';
@@ -20,12 +22,12 @@ const SidebarProvider = ({
   const { verifiedMode } = useModel('courseHomeMeta', courseId);
   const shouldDisplayFullScreen = useWindowSize().width < breakpoints.extraLarge.minWidth;
   const shouldDisplaySidebarOpen = useWindowSize().width > breakpoints.extraLarge.minWidth;
-  const hasSavedCourseOutlineSidebarState = window.sessionStorage.getItem('showCourseOutlineSidebar');
   const query = new URLSearchParams(window.location.search);
+  const { enabled: isDefaultOpenDiscussionsSidebar } = useSelector(getDiscussionsSidebarSettings);
   const isInitiallySidebarOpen = shouldDisplaySidebarOpen || query.get('sidebar') === 'true';
-  const defaultSidebarID = hasSavedCourseOutlineSidebarState
-    ? SIDEBARS[courseOutlineSidebar.ID].ID
-    : SIDEBARS[discussionsSidebar.ID].ID;
+  const defaultSidebarID = isDefaultOpenDiscussionsSidebar
+    ? SIDEBARS[discussionsSidebar.ID].ID
+    : SIDEBARS[courseOutlineSidebar.ID].ID;
   const initialSidebar = isInitiallySidebarOpen ? defaultSidebarID : null;
   const [currentSidebar, setCurrentSidebar] = useState(initialSidebar);
   const [notificationStatus, setNotificationStatus] = useState(getLocalStorage(`notificationStatus.${courseId}`));
