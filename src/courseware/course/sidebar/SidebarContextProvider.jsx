@@ -23,19 +23,21 @@ const SidebarProvider = ({
   const shouldDisplayFullScreen = useWindowSize().width < breakpoints.extraLarge.minWidth;
   const shouldDisplaySidebarOpen = useWindowSize().width > breakpoints.extraLarge.minWidth;
   const query = new URLSearchParams(window.location.search);
-  const { enabled: isDefaultOpenDiscussionsSidebar } = useSelector(getDiscussionsSidebarSettings);
+  const isDefaultDisplayDiscussionsSidebar = useSelector(getDiscussionsSidebarSettings).enabled;
+  const isCollapsedOutlineSidebar = window.sessionStorage.getItem('hideCourseOutlineSidebar');
   const isInitiallySidebarOpen = shouldDisplaySidebarOpen || query.get('sidebar') === 'true';
-  const defaultSidebarID = isDefaultOpenDiscussionsSidebar
-    ? SIDEBARS[discussionsSidebar.ID].ID
-    : SIDEBARS[courseOutlineSidebar.ID].ID;
-  const initialSidebar = isInitiallySidebarOpen ? defaultSidebarID : null;
+  const isInitiallyOpenDiscussionsSidebar = isDefaultDisplayDiscussionsSidebar && SIDEBARS[discussionsSidebar.ID].ID;
+  const isInitiallyOpenOutlineSidebar = !isCollapsedOutlineSidebar && SIDEBARS[courseOutlineSidebar.ID].ID;
+  const initialSidebar = isInitiallySidebarOpen
+    ? isInitiallyOpenDiscussionsSidebar || isInitiallyOpenOutlineSidebar
+    : null;
   const [currentSidebar, setCurrentSidebar] = useState(initialSidebar);
   const [notificationStatus, setNotificationStatus] = useState(getLocalStorage(`notificationStatus.${courseId}`));
   const [upgradeNotificationCurrentState, setUpgradeNotificationCurrentState] = useState(getLocalStorage(`upgradeNotificationCurrentState.${courseId}`));
 
   useEffect(() => {
     // if the user hasn't purchased the course, show the notifications sidebar
-    if (currentSidebar === null) {
+    if (!currentSidebar) {
       setCurrentSidebar(verifiedMode ? SIDEBARS.NOTIFICATIONS.ID : SIDEBARS.DISCUSSIONS.ID);
     }
   }, [unitId]);
