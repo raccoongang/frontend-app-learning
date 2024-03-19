@@ -111,7 +111,7 @@ export async function getCoursewareOutlineSidebarEnabledFlag(courseId) {
 }
 
 /**
- * Get waffle flag value that default opens courseware discussion sidebar.
+ * Get the waffle flag value that default opens the courseware discussion sidebar.
  * @param {string} courseId - The unique identifier for the course.
  * @returns {Promise<{enabled: boolean}>} - The boolean value of default opening of the discussion sidebar.
  */
