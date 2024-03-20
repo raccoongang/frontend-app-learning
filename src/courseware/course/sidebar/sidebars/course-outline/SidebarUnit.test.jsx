@@ -10,16 +10,15 @@ initializeMockApp();
 
 describe('<SidebarUnit />', () => {
   let store = {};
-  const unit = {
-    complete: false,
-    icon: 'video',
-    id: 'unit1',
-    title: 'Unit 1',
-    type: 'video',
-  };
+  let unit;
+  let sequenceId;
 
   const initTestStore = async (options) => {
     store = await initializeTestStore(options);
+    const state = store.getState();
+    [sequenceId] = Object.keys(state.courseware.courseOutline.sequences);
+    const sequence = state.courseware.courseOutline.sequences[sequenceId];
+    unit = state.courseware.courseOutline.units[sequence.unitIds[0]];
   };
 
   function renderWithProvider(props = {}) {
@@ -31,8 +30,8 @@ describe('<SidebarUnit />', () => {
               isFirst
               id="unit1"
               courseId="course123"
-              sequenceId="sequence123"
-              unit={unit}
+              sequenceId={sequenceId}
+              unit={{ ...unit, icon: 'video' }}
               isActive={false}
               {...props}
             />
@@ -60,9 +59,12 @@ describe('<SidebarUnit />', () => {
     expect(container.querySelector('.border-top')).not.toBeInTheDocument();
   });
 
-  it('renders correctly when unit is not first', async () => {
+  it('renders correctly when unit is not first and icon is not set', async () => {
     await initTestStore();
-    const container = renderWithProvider({ isFirst: false });
+    const container = renderWithProvider({
+      isFirst: false,
+      unit: { ...unit, icon: null },
+    });
 
     expect(screen.getByText(unit.title)).toBeInTheDocument();
     expect(container.querySelector('.border-top')).toBeInTheDocument();
