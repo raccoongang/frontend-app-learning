@@ -279,9 +279,15 @@ describe('Data layer integration tests', () => {
 
       it('Should fail to check completion and log error', async () => {
         axiosMock.onPost(getCompletionURL).networkError();
+        axiosMock.onGet(getCourseOutlineURL).networkError();
 
         await executeThunk(
           thunks.checkBlockCompletion(courseId, sequenceId, unitId),
+          store.dispatch,
+          store.getState,
+        );
+        await executeThunk(
+          thunks.getCourseOutlineStructure(courseId, sequenceId, unitId),
           store.dispatch,
           store.getState,
         );

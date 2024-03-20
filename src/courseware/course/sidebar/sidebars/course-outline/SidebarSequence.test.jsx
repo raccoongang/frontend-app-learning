@@ -1,5 +1,6 @@
 import { MemoryRouter } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -73,5 +74,11 @@ describe('<SidebarSequence />', () => {
     expect(screen.getByText(`, ${courseOutlineMessages.completedAssignment.defaultMessage}`)).toBeInTheDocument();
     expect(screen.getByText(unit.title)).toBeInTheDocument();
     expect(screen.getByText(`, ${messages.incompleteUnit.defaultMessage}`)).toBeInTheDocument();
+
+    userEvent.click(screen.getByText(sequence.title));
+    await waitFor(() => {
+      expect(screen.queryByText(unit.title)).not.toBeInTheDocument();
+      expect(screen.queryByText(`, ${messages.incompleteUnit.defaultMessage}`)).not.toBeInTheDocument();
+    });
   });
 });
