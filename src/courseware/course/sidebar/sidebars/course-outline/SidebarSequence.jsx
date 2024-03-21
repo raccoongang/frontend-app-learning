@@ -10,6 +10,7 @@ import courseOutlineMessages from '../../../../../course-home/outline-tab/messag
 import { getCourseOutline, getSequenceId } from '../../../../data/selectors';
 import { CompletionSolidIcon } from './icons';
 import SidebarUnit from './SidebarUnit';
+import { UNIT_ICON_TYPES } from './UnitIcon';
 
 const SidebarSequence = ({
   intl,
@@ -24,6 +25,7 @@ const SidebarSequence = ({
     title,
     specialExamInfo,
     unitIds,
+    type,
   } = sequence;
 
   const [open, setOpen] = useState(defaultOpen);
@@ -67,6 +69,7 @@ const SidebarSequence = ({
               isActive={activeUnitId === unitId}
               activeUnitId={activeUnitId}
               isFirst={index === 0}
+              isLocked={type === UNIT_ICON_TYPES.lock}
             />
           ))}
         </ol>
@@ -83,6 +86,7 @@ SidebarSequence.propTypes = {
     complete: PropTypes.bool,
     id: PropTypes.string,
     title: PropTypes.string,
+    type: PropTypes.string,
     specialExamInfo: PropTypes.string,
     unitIds: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,

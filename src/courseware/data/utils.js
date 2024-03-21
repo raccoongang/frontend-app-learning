@@ -172,10 +172,12 @@ export function normalizeOutlineBlocks(courseId, blocks) {
         break;
 
       case 'sequential':
+      case 'lock':
         models.sequences[block.id] = {
           complete: block.complete,
           id: block.id,
           title: block.display_name,
+          type: block.type,
           specialExamInfo: block.special_exam_info,
           unitIds: block.children || [],
         };
