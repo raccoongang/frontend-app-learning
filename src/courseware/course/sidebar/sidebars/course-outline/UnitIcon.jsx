@@ -42,7 +42,7 @@ const UnitIcon = ({ type, isCompleted, ...props }) => {
 
   let Icon = iconMap[type || UNIT_ICON_TYPES.other];
 
-  if (typeof iconMap[type || UNIT_ICON_TYPES.other] === 'object') {
+  if (typeof Icon === 'object') {
     Icon = iconMap[type || UNIT_ICON_TYPES.other]?.[isCompleted ? 'complete' : 'default'];
   }
 
