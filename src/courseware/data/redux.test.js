@@ -276,7 +276,6 @@ describe('Data layer integration tests', () => {
     describe('Test checkBlockCompletion', () => {
       const getCourseOutlineURL = `${getConfig().LMS_BASE_URL}/api/course_home/v1/sidebar/${courseId}`;
       const getCompletionURL = `${getConfig().LMS_BASE_URL}/courses/${courseId}/xblock/${sequenceId}/handler/get_completion`;
-      const getCourseOutlineURL = `${getConfig().LMS_BASE_URL}/api/course_home/v1/sidebar/${courseId}`;
 
       it('Should fail to check completion and log error', async () => {
         axiosMock.onPost(getCompletionURL).networkError();

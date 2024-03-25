@@ -31,7 +31,7 @@ describe('<SidebarUnit />', () => {
               id="unit1"
               courseId="course123"
               sequenceId={sequenceId}
-              unit={{ ...unit, icon: 'video' }}
+              unit={{ ...unit, icon: 'video', isLocked: false }}
               isActive={false}
               {...props}
             />
@@ -68,5 +68,14 @@ describe('<SidebarUnit />', () => {
 
     expect(screen.getByText(unit.title)).toBeInTheDocument();
     expect(container.querySelector('.border-top')).toBeInTheDocument();
+  });
+
+  it('renders correctly when unit is locked', async () => {
+    await initTestStore();
+    renderWithProvider({
+      unit: { ...unit, isLocked: true },
+    });
+
+    expect(screen.getByText(unit.title)).toBeInTheDocument();
   });
 });

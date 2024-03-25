@@ -67,7 +67,7 @@ describe('<CourseOutlineTray />', () => {
     expect(screen.queryByRole('button', { name: 'Course Outline' })).not.toBeInTheDocument();
   });
 
-  it('doesn\'t renders when outline sidebar is disabled', async () => {
+  it('doesn\'t render when outline sidebar is disabled', async () => {
     await initTestStore({ outlineSidebarSettings: { enabled: false } });
     renderWithProvider();
 

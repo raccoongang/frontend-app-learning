@@ -64,7 +64,7 @@ describe('<SidebarSequence />', () => {
       defaultOpen: true,
       sequence: {
         ...sequence,
-        description: sequenceDescription,
+        specialExamInfo: sequenceDescription,
         complete: true,
       },
     });

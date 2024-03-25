@@ -1,4 +1,5 @@
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import courseOutlineMessages from '../../../../../course-home/outline-tab/messages';
@@ -34,7 +35,7 @@ describe('<SidebarSection />', () => {
     expect(container.querySelector('.text-success')).not.toBeInTheDocument();
 
     const button = getByText(section.title);
-    fireEvent.click(button);
+    userEvent.click(button);
     expect(mockHandleSelectSection).toHaveBeenCalledTimes(1);
     expect(mockHandleSelectSection).toHaveBeenCalledWith(section.id);
   });
@@ -49,7 +50,7 @@ describe('<SidebarSection />', () => {
     expect(container.querySelector('.text-success')).toBeInTheDocument();
 
     const button = getByText(section.title);
-    fireEvent.click(button);
+    userEvent.click(button);
     expect(mockHandleSelectSection).toHaveBeenCalledTimes(1);
     expect(mockHandleSelectSection).toHaveBeenCalledWith(section.id);
   });
