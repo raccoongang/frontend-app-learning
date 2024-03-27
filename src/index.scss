@@ -321,7 +321,7 @@
 
   @media (max-width: -1 + map-get($grid-breakpoints, "sm")) {
     flex-direction: column;
-    gap: 16px;
+    gap: $spacer;
   }
 
   .previous-button,
