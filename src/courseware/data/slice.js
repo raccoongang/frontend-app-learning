@@ -18,6 +18,7 @@ const slice = createSlice({
     courseOutlineSidebarSettings: {},
     discussionsSidebarSettings: {},
     courseOutlineStatus: LOADING,
+    courseOutlineShouldUpdate: false,
   },
   reducers: {
     fetchCourseRequest: (state, { payload }) => {
@@ -58,6 +59,7 @@ const slice = createSlice({
     fetchCourseOutlineSuccess: (state, { payload }) => {
       state.courseOutline = payload.courseOutline;
       state.courseOutlineStatus = LOADED;
+      state.courseOutlineShouldUpdate = false;
     },
     fetchCourseOutlineFailure: (state) => {
       state.courseOutline = {};
@@ -90,6 +92,11 @@ const slice = createSlice({
         .find(id => state.courseOutline.sections[id].sequenceIds.includes(sequenceId));
       const sectionSequences = state.courseOutline.sections[sectionId].sequenceIds;
       const isAllSequencesAreComplete = sectionSequences.every((id) => state.courseOutline.sequences[id].complete);
+
+      const hasLockedSequence = sectionSequences.some((id) => state.courseOutline.sequences[id].type === 'lock');
+      if (isAllUnitsAreComplete && hasLockedSequence) {
+        state.courseOutlineShouldUpdate = true;
+      }
 
       if (isAllSequencesAreComplete) {
         state.courseOutline.sections[sectionId].complete = true;
