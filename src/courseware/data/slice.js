@@ -92,8 +92,12 @@ const slice = createSlice({
         .find(id => state.courseOutline.sections[id].sequenceIds.includes(sequenceId));
       const sectionSequences = state.courseOutline.sections[sectionId].sequenceIds;
       const isAllSequencesAreComplete = sectionSequences.every((id) => state.courseOutline.sequences[id].complete);
-
       const hasLockedSequence = sectionSequences.some((id) => state.courseOutline.sequences[id].type === 'lock');
+
+      // This block of code checks whether all units in the current sequence are complete
+      // and if the parent section has a locked (prerequisites) sequence. If both conditions
+      // are met, it switches the state of the 'courseOutlineShouldUpdate' flag to true,
+      // indicating that the sidebar outline structure needs to be refetched.
       if (isAllUnitsAreComplete && hasLockedSequence) {
         state.courseOutlineShouldUpdate = true;
       }
