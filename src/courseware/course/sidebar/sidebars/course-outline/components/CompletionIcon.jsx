@@ -5,7 +5,7 @@ import { CompletionSolidIcon, DashedCircleIcon } from '../icons';
 
 const CompletionIcon = ({ completionStat }) => {
   const { completed, total } = completionStat ?? {};
-  const percentage = (completed / total) * 100;
+  const percentage = Math.min((completed / total) * 100, 100);
   const remainder = 100 - percentage;
 
   switch (true) {

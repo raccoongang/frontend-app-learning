@@ -10,7 +10,7 @@ import {
 
 import { useModel } from '@src/generic/model-store';
 import { LOADING, LOADED } from '@src/course-home/data/slice';
-import PageLoading from '../../../../../generic/PageLoading';
+import PageLoading from '@src/generic/PageLoading';
 import {
   getSequenceId,
   getCourseOutline,
