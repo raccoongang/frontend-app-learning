@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
-import { CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
+import {
+  CheckCircle as CheckCircleIcon,
+  LmsCompletionSolid as LmsCompletionSolidIcon,
+} from '@openedx/paragon/icons';
 
-import { CompletionSolidIcon, DashedCircleIcon } from '../icons';
+import { DashedCircleIcon } from '../icons';
 
 const CompletionIcon = ({ completionStat: { completed = 0, total = 0 } }) => {
   const percentage = total !== 0 ? Math.min((completed / total) * 100, 100) : 0;
@@ -9,7 +12,7 @@ const CompletionIcon = ({ completionStat: { completed = 0, total = 0 } }) => {
 
   switch (true) {
     case !completed:
-      return <CompletionSolidIcon data-testid="completion-solid-icon" />;
+      return <LmsCompletionSolidIcon className="text-gray-300" data-testid="completion-solid-icon" />;
     case completed === total:
       return <CheckCircleIcon className="text-success" data-testid="check-circle-icon" />;
     default:
