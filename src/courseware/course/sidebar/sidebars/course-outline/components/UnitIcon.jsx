@@ -3,16 +3,13 @@ import classNames from 'classnames';
 import {
   Locked as LockedIcon,
   Article as ArticleIcon,
+  LmsBook as LmsBookIcon,
+  LmsBookComplete as LmsBookCompleteIcon,
+  LmsEditSquare as LmsEditSquareIcon,
+  LmsEditSquareComplete as LmsEditSquareCompleteIcon,
+  LmsVideocam as LmsVideocamIcon,
+  LmsVideocamComplete as LmsVideocamCompleteIcon,
 } from '@openedx/paragon/icons';
-
-import {
-  BookCompleteIcon,
-  BookIcon,
-  EditSquareCompleteIcon,
-  EditSquareIcon,
-  VideocamCompleteIcon,
-  VideocamIcon,
-} from '../icons';
 
 export const UNIT_ICON_TYPES = {
   video: 'video',
@@ -25,18 +22,18 @@ export const UNIT_ICON_TYPES = {
 const UnitIcon = ({ type, isCompleted, ...props }) => {
   const iconMap = {
     [UNIT_ICON_TYPES.video]: {
-      default: VideocamIcon,
-      complete: VideocamCompleteIcon,
+      default: LmsVideocamIcon,
+      complete: LmsVideocamCompleteIcon,
     },
     [UNIT_ICON_TYPES.problem]: {
-      default: EditSquareIcon,
-      complete: EditSquareCompleteIcon,
+      default: LmsEditSquareIcon,
+      complete: LmsEditSquareCompleteIcon,
     },
     [UNIT_ICON_TYPES.vertical]: ArticleIcon,
     [UNIT_ICON_TYPES.lock]: LockedIcon,
     [UNIT_ICON_TYPES.other]: {
-      default: BookIcon,
-      complete: BookCompleteIcon,
+      default: LmsBookIcon,
+      complete: LmsBookCompleteIcon,
     },
   };
 
@@ -47,7 +44,7 @@ const UnitIcon = ({ type, isCompleted, ...props }) => {
   }
 
   return (
-    <Icon {...props} className={classNames({ 'text-success': isCompleted, 'text-gray-500': !isCompleted })} />
+    <Icon {...props} className={classNames({ 'text-success': isCompleted, 'text-gray-300': !isCompleted })} />
   );
 };
 
