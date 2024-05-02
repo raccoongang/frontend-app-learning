@@ -1,9 +1,12 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, Icon } from '@openedx/paragon';
 import { ChevronRight as ChevronRightIcon } from '@openedx/paragon/icons';
 
 import courseOutlineMessages from '@src/course-home/outline-tab/messages';
+import { getSequenceId } from '@src/courseware/data/selectors';
 import CompletionIcon from './CompletionIcon';
 
 const SidebarSection = ({ intl, section, handleSelectSection }) => {
@@ -11,8 +14,12 @@ const SidebarSection = ({ intl, section, handleSelectSection }) => {
     id,
     complete,
     title,
+    sequenceIds,
     completionStat,
   } = section;
+
+  const activeSequenceId = useSelector(getSequenceId);
+  const isActiveSection = sequenceIds.includes(activeSequenceId);
 
   const sectionTitle = (
     <>
@@ -34,7 +41,10 @@ const SidebarSection = ({ intl, section, handleSelectSection }) => {
     <li className="mb-2 course-outline-sidebar-section">
       <Button
         variant="tertiary"
-        className="d-flex align-items-center w-100 px-4 py-3.5 rounded-0 justify-content-start"
+        className={classNames(
+          'd-flex align-items-center w-100 px-4 py-3.5 rounded-0 justify-content-start',
+          { 'bg-info-100': isActiveSection },
+        )}
         onClick={() => handleSelectSection(id)}
       >
         {sectionTitle}
