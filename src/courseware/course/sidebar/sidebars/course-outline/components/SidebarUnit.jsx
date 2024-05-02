@@ -34,25 +34,23 @@ const SidebarUnit = ({
 
   return (
     <li className={classNames({ 'bg-info-100': isActive, 'border-top border-light': !isFirst })}>
-      <div className="row w-100 m-0 d-flex align-items-center">
+      <Link
+        to={`/course/${courseId}/${sequenceId}/${id}`}
+        className="row w-100 m-0 d-flex align-items-center text-gray-700"
+        onClick={handleClick}
+      >
         <div className="col-auto p-0">
           <UnitIcon type={iconType} isCompleted={complete} />
         </div>
         <div className="col-10 p-0 ml-3 text-break">
           <span className="align-middle">
-            <Link
-              to={`/course/${courseId}/${sequenceId}/${id}`}
-              className="text-gray-700"
-              onClick={handleClick}
-            >
-              {title}
-            </Link>
+            {title}
           </span>
           <span className="sr-only">
             , {intl.formatMessage(complete ? messages.completedUnit : messages.incompleteUnit)}
           </span>
         </div>
-      </div>
+      </Link>
     </li>
   );
 };
