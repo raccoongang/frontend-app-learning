@@ -78,7 +78,11 @@ const slice = createSlice({
       const sequenceId = Object.keys(state.courseOutline.sequences)
         .find(id => state.courseOutline.sequences[id].unitIds.includes(unitId));
       const sequenceUnits = state.courseOutline.sequences[sequenceId].unitIds;
+      const completedUnits = sequenceUnits.filter((id) => state.courseOutline.units[id].complete);
       const isAllUnitsAreComplete = sequenceUnits.every((id) => state.courseOutline.units[id].complete);
+
+      // Update amount of completed units of the sequence
+      state.courseOutline.sequences[sequenceId].completionStat.completed = completedUnits.length;
 
       if (isAllUnitsAreComplete) {
         state.courseOutline.sequences[sequenceId].complete = true;
@@ -87,6 +91,7 @@ const slice = createSlice({
       const sectionId = Object.keys(state.courseOutline.sections)
         .find(id => state.courseOutline.sections[id].sequenceIds.includes(sequenceId));
       const sectionSequences = state.courseOutline.sections[sectionId].sequenceIds;
+      const completedSequences = sectionSequences.filter((id) => state.courseOutline.sequences[id].complete);
       const isAllSequencesAreComplete = sectionSequences.every((id) => state.courseOutline.sequences[id].complete);
       const hasLockedSequence = sectionSequences.some((id) => state.courseOutline.sequences[id].type === 'lock');
 
@@ -97,6 +102,9 @@ const slice = createSlice({
       if (isAllUnitsAreComplete && hasLockedSequence) {
         state.courseOutlineShouldUpdate = true;
       }
+
+      // Update amount of completed sequences of the section
+      state.courseOutline.sections[sectionId].completionStat.completed = completedSequences.length;
 
       if (isAllSequencesAreComplete) {
         state.courseOutline.sections[sectionId].complete = true;

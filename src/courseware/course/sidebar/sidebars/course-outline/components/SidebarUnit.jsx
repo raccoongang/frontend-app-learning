@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { checkBlockCompletion } from '@src/courseware/data';
-import UnitIcon, { UNIT_ICON_TYPES } from './UnitIcon';
 import messages from '../messages';
+import UnitIcon, { UNIT_ICON_TYPES } from './UnitIcon';
 
 const SidebarUnit = ({
   id,
