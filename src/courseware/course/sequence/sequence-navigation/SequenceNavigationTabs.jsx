@@ -21,6 +21,7 @@ const SequenceNavigationTabs = ({
         <div
           className="sequence-navigation-tabs d-flex flex-grow-1"
           style={shouldDisplayDropdown ? invisibleStyle : null}
+          role="tablist"
         >
           {unitIds.map(buttonUnitId => (
             <UnitButton
