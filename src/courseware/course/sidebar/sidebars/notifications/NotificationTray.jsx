@@ -62,7 +62,21 @@ const NotificationTray = ({ intl }) => {
             setupgradeNotificationCurrentState={setUpgradeNotificationCurrentState}
           />
         ) : (
-          <p className="p-3 small">{intl.formatMessage(messages.noNotificationsMessage)}</p>
+          <UpgradeNotification
+            offer="test"
+            verifiedMode="test"
+            accessExpiration="test"
+            contentTypeGatingEnabled="test"
+            marketingUrl="test"
+            upsellPageName="in_course"
+            userTimezone="test"
+            shouldDisplayBorder={false}
+            timeOffsetMillis="test"
+            courseId={courseId}
+            org="test"
+            upgradeNotificationCurrentState={upgradeNotificationCurrentState}
+            setupgradeNotificationCurrentState={setUpgradeNotificationCurrentState}
+          />
         )}
       </div>
     </SidebarBase>

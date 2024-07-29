@@ -3,7 +3,9 @@ import { Icon, IconButton } from '@edx/paragon';
 import { ArrowBackIos, Close } from '@edx/paragon/icons';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useContext } from 'react';
+import React, {
+  useCallback, useContext, useRef, useEffect,
+} from 'react';
 import { useEventListener } from '../../../../generic/hooks';
 import messages from '../../messages';
 import SidebarContext from '../SidebarContext';
@@ -23,6 +25,11 @@ const SidebarBase = ({
     shouldDisplayFullScreen,
     currentSidebar,
   } = useContext(SidebarContext);
+  const closeButtonRef = useRef(null);
+
+  useEffect(() => {
+    closeButtonRef.current.focus();
+  }, []);
 
   const receiveMessage = useCallback(({ data }) => {
     const { type } = data;
@@ -63,7 +70,13 @@ const SidebarBase = ({
       {showTitleBar && (
         <>
           <div className="d-flex align-items-center">
-            <span className="p-2.5 d-inline-block">{title}</span>
+            <h2
+              className="p-2.5 d-inline-block"
+              style={{
+                fontSize: '1.125rem', fontWeight: '400', color: '#454545', margin: '0', lineHeight: '1.5556',
+              }}
+            >{title}
+            </h2>
             {shouldDisplayFullScreen
               ? null
               : (
@@ -74,8 +87,10 @@ const SidebarBase = ({
                     iconAs={Icon}
                     onClick={() => toggleSidebar(null)}
                     variant="primary"
+                    tabIndex="0"
+                    ref={closeButtonRef}
                     alt={intl.formatMessage(messages.closeNotificationTrigger)}
-                  />
+                  />123
                 </div>
               )}
           </div>

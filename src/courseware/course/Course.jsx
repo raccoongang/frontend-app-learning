@@ -78,7 +78,7 @@ const Course = ({
   }, [sequenceId]);
 
   return (
-    <SidebarProvider courseId={courseId} unitId={unitId}>
+    <SidebarProvider courseId={courseId} unitId={unitId} sectionId={section ? section.id : null}>
       <Helmet>
         <title>{`${pageTitleBreadCrumbs.join(' | ')} | ${getConfig().SITE_NAME}`}</title>
       </Helmet>

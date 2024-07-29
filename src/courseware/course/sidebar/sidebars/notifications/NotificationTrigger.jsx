@@ -1,9 +1,10 @@
+// eslint-disable-next-line no-unused-vars
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { getLocalStorage, setLocalStorage } from '../../../../../data/localStorage';
 import { getSessionStorage, setSessionStorage } from '../../../../../data/sessionStorage';
-import messages from '../../../messages';
+// import messages from '../../../messages';
 import SidebarTriggerBase from '../../common/TriggerBase';
 import SidebarContext from '../../SidebarContext';
 
@@ -12,15 +13,17 @@ import NotificationIcon from './NotificationIcon';
 export const ID = 'NOTIFICATIONS';
 
 const NotificationTrigger = ({
-  intl,
+  // intl,
   onClick,
 }) => {
   const {
     courseId,
+    sectionId,
     notificationStatus,
     setNotificationStatus,
     upgradeNotificationCurrentState,
   } = useContext(SidebarContext);
+  const [isOpenNotificationStatusBar, toggleNotificationStatusBar] = useState(false);
 
   /* Re-show a red dot beside the notification trigger for each of the 7 UpgradeNotification stages
    The upgradeNotificationCurrentState prop will be available after UpgradeNotification mounts. Once available,
@@ -50,21 +53,29 @@ const NotificationTrigger = ({
   const handleClick = () => {
     if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
       setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
+      toggleNotificationStatusBar(true);
     } else {
       setSessionStorage(`notificationTrayStatus.${courseId}`, 'open');
+      toggleNotificationStatusBar(false);
     }
     onClick();
   };
 
   return (
-    <SidebarTriggerBase onClick={handleClick} ariaLabel={intl.formatMessage(messages.openNotificationTrigger)}>
+    <SidebarTriggerBase
+      onClick={handleClick}
+      // ariaLabel={intl.formatMessage(messages.openNotificationTrigger)}
+      ariaLabel="notifications tray"
+      isOpenNotificationStatusBar={isOpenNotificationStatusBar}
+      sectionId={sectionId}
+    >
       <NotificationIcon status={notificationStatus} notificationColor="bg-danger-500" />
     </SidebarTriggerBase>
   );
 };
 
 NotificationTrigger.propTypes = {
-  intl: intlShape.isRequired,
+  // intl: intlShape.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
