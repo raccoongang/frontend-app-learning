@@ -77,7 +77,7 @@ describe('Sequence Navigation', () => {
     const onNavigate = jest.fn();
     render(<SequenceNavigation {...mockData} {...{ onNavigate }} />);
 
-    const unitButtons = screen.getAllByRole('button', { name: /\d+/ });
+    const unitButtons = screen.getAllByRole('tab', { name: /\d+/ });
     expect(unitButtons).toHaveLength(unitButtons.length);
     unitButtons.forEach(button => fireEvent.click(button));
     expect(onNavigate).toHaveBeenCalledTimes(unitButtons.length);
