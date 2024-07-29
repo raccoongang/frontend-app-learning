@@ -74,8 +74,10 @@ describe('Sequence', () => {
     );
 
     await waitFor(() => expect(screen.queryByText('Loading locked content messaging...')).toBeInTheDocument());
-    // `Previous`, `Active`, `Next`, `Prerequisite` and `Close Tray` buttons.
-    expect(screen.getAllByRole('button').length).toEqual(5);
+    // `Previous`, `Next`, `Prerequisite` and `Close Tray` buttons.
+    expect(screen.getAllByRole('button').length).toEqual(4);
+    // `Active` button.
+    expect(screen.getAllByRole('tab').length).toEqual(1);
 
     expect(screen.getByText('Content Locked')).toBeInTheDocument();
     const unitContainer = container.querySelector('.unit-container');
@@ -125,8 +127,11 @@ describe('Sequence', () => {
   it('handles loading unit', async () => {
     render(<Sequence {...mockData} />);
     expect(await screen.findByText('Loading learning sequence...')).toBeInTheDocument();
-    // Renders navigation buttons plus one button for each unit.
-    expect(screen.getAllByRole('button')).toHaveLength(4 + unitBlocks.length);
+    // Renders unit tabs.
+    expect(screen.getAllByRole('tab')).toHaveLength(unitBlocks.length);
+
+    // `Previous`, `Next`, `Prerequisite` and `Close Tray` buttons.
+    expect(screen.getAllByRole('button').length).toEqual(4);
 
     loadUnit();
     await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).not.toBeInTheDocument());
@@ -370,7 +375,7 @@ describe('Sequence', () => {
       render(<Sequence {...testData} />, { store: testStore });
       await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).toBeInTheDocument());
 
-      fireEvent.click(screen.getByRole('button', { name: targetUnit.display_name }));
+      fireEvent.click(screen.getByRole('tab', { name: targetUnit.display_name }));
       expect(testData.unitNavigationHandler).toHaveBeenCalledWith(targetUnit.id);
       expect(sendTrackEvent).toHaveBeenCalledWith('edx.ui.lms.sequence.tab_selected', {
         current_tab: currentTabNumber,
