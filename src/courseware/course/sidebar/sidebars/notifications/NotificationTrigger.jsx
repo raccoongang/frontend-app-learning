@@ -1,7 +1,9 @@
 // eslint-disable-next-line no-unused-vars
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext, useEffect, useState, useRef,
+} from 'react';
 import { getLocalStorage, setLocalStorage } from '../../../../../data/localStorage';
 import { getSessionStorage, setSessionStorage } from '../../../../../data/sessionStorage';
 // import messages from '../../../messages';
@@ -24,6 +26,7 @@ const NotificationTrigger = ({
     upgradeNotificationCurrentState,
   } = useContext(SidebarContext);
   const [isOpenNotificationStatusBar, toggleNotificationStatusBar] = useState(false);
+  const triggerRef = useRef(null);
 
   /* Re-show a red dot beside the notification trigger for each of the 7 UpgradeNotification stages
    The upgradeNotificationCurrentState prop will be available after UpgradeNotification mounts. Once available,
@@ -48,18 +51,34 @@ const NotificationTrigger = ({
 
   useEffect(() => {
     UpdateUpgradeNotificationLastSeen();
+    if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
+      toggleNotificationStatusBar(true);
+    } else {
+      toggleNotificationStatusBar(false);
+    }
+    setSessionStorage(`notificationTrayFocus.${courseId}`, 'false');
   });
 
   const handleClick = () => {
+    setSessionStorage(`notificationTrayFocus.${courseId}`, String(isOpenNotificationStatusBar));
+
     if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
-      setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
       toggleNotificationStatusBar(true);
+      setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
+      // setSessionStorage(`notificationTrayFocus.${courseId}`, 'true');
     } else {
-      setSessionStorage(`notificationTrayStatus.${courseId}`, 'open');
       toggleNotificationStatusBar(false);
+      setSessionStorage(`notificationTrayStatus.${courseId}`, 'open');
+      triggerRef.current?.focus();
     }
     onClick();
   };
+
+  if (getSessionStorage(`notificationTrayFocus.${courseId}`) === 'true') {
+    triggerRef.current?.focus();
+  }
+
+  // console.log('isOpenNotificationStatusBar ===>', isOpenNotificationStatusBar);
 
   return (
     <SidebarTriggerBase
@@ -68,6 +87,7 @@ const NotificationTrigger = ({
       ariaLabel="notifications tray"
       isOpenNotificationStatusBar={isOpenNotificationStatusBar}
       sectionId={sectionId}
+      triggerRef={triggerRef}
     >
       <NotificationIcon status={notificationStatus} notificationColor="bg-danger-500" />
     </SidebarTriggerBase>

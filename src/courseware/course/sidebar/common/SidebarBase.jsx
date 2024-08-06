@@ -3,12 +3,11 @@ import { Icon, IconButton } from '@edx/paragon';
 import { ArrowBackIos, Close } from '@edx/paragon/icons';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, {
-  useCallback, useContext, useRef, useEffect,
-} from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { useEventListener } from '../../../../generic/hooks';
 import messages from '../../messages';
 import SidebarContext from '../SidebarContext';
+import { setSessionStorage } from '../../../../data/sessionStorage';
 
 const SidebarBase = ({
   intl,
@@ -21,25 +20,39 @@ const SidebarBase = ({
   width,
 }) => {
   const {
+    courseId,
     toggleSidebar,
     shouldDisplayFullScreen,
     currentSidebar,
   } = useContext(SidebarContext);
-  const closeButtonRef = useRef(null);
-
-  useEffect(() => {
-    closeButtonRef.current.focus();
-  }, []);
 
   const receiveMessage = useCallback(({ data }) => {
     const { type } = data;
     if (type === 'learning.events.sidebar.close') {
       toggleSidebar(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sidebarId, toggleSidebar]);
+  }, [toggleSidebar]);
 
   useEventListener('message', receiveMessage);
+
+  const handleNotificationClose = () => {
+    toggleSidebar(null);
+    setSessionStorage(`notificationTrayFocus.${courseId}`, 'true');
+    setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
+  };
+
+  const handleKeyDown = useCallback((event) => {
+    if (event.key === 'Escape') {
+      handleNotificationClose();
+    }
+  }, [handleNotificationClose]);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   return (
     <section
@@ -85,10 +98,7 @@ const SidebarBase = ({
                     src={Close}
                     size="sm"
                     iconAs={Icon}
-                    onClick={() => toggleSidebar(null)}
-                    variant="primary"
-                    tabIndex="0"
-                    ref={closeButtonRef}
+                    onClick={handleNotificationClose}
                     alt={intl.formatMessage(messages.closeNotificationTrigger)}
                   />123
                 </div>
