@@ -1,39 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faVideo, faBook, faEdit, faTasks, faLock,
-} from '@fortawesome/free-solid-svg-icons';
+import { Icon } from '@edx/paragon';
+import { BookOpen as BookOpenIcon } from '@edx/paragon/icons';
+
+import { UNIT_ICON_TYPES, UNIT_TYPE_ICONS_MAP } from './constants';
 
 const UnitIcon = ({ type }) => {
-  let icon = null;
-  switch (type) {
-    case 'video':
-      icon = faVideo;
-      break;
-    case 'other':
-      icon = faBook;
-      break;
-    case 'vertical':
-      icon = faTasks;
-      break;
-    case 'problem':
-      icon = faEdit;
-      break;
-    case 'lock':
-      icon = faLock;
-      break;
-    default:
-      icon = faBook;
-  }
+  const icon = UNIT_TYPE_ICONS_MAP[type] || BookOpenIcon;
 
-  return (
-    <FontAwesomeIcon className="unit-icon" icon={icon} />
-  );
+  return <Icon src={icon} screenReaderText={type} />;
 };
 
 UnitIcon.propTypes = {
-  type: PropTypes.oneOf(['video', 'other', 'vertical', 'problem', 'lock']).isRequired,
+  type: PropTypes.oneOf(UNIT_ICON_TYPES).isRequired,
 };
 
 export default UnitIcon;

@@ -71,7 +71,14 @@ const SequenceNavigation = ({
     const nextArrow = isRtl(getLocale()) ? ChevronLeft : ChevronRight;
 
     return (
-      <Button variant="link" className="next-btn" onClick={buttonOnClick} disabled={disabled} iconAfter={nextArrow}>
+      <Button
+        variant="link"
+        className="next-btn"
+        onClick={buttonOnClick}
+        disabled={disabled}
+        iconAfter={nextArrow}
+        aria-label="next-btn"
+      >
         {shouldDisplayNotificationTriggerInSequence ? null : buttonText}
       </Button>
     );
@@ -86,12 +93,18 @@ const SequenceNavigation = ({
       style={{ width: shouldDisplayNotificationTriggerInSequence ? '90%' : null }}
       aria-label="course sequence tabs"
     >
-      <Button variant="link" className="previous-btn" onClick={previousSequenceHandler} disabled={isFirstUnit} iconBefore={prevArrow}>
+      <Button
+        variant="link"
+        className="previous-btn"
+        onClick={previousSequenceHandler}
+        disabled={isFirstUnit}
+        iconBefore={prevArrow}
+        aria-label="previous-btn"
+      >
         {shouldDisplayNotificationTriggerInSequence ? null : intl.formatMessage(messages.previousButton)}
       </Button>
       {renderUnitButtons()}
       {renderNextButton()}
-
     </nav>
   );
 };

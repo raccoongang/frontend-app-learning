@@ -1,7 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from '@edx/paragon';
+import { Check } from '@edx/paragon/icons';
 
-const CompleteIcon = (props) => <FontAwesomeIcon icon={faCheck} {...props} />;
+const CompleteIcon = (props) => <Icon src={Check} screenReaderText="Checkmark" {...props} />;
 
 export default CompleteIcon;
