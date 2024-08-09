@@ -1,7 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark } from '@fortawesome/free-regular-svg-icons';
+import { Icon } from '@edx/paragon';
+import { BookmarkBorder } from '@edx/paragon/icons';
 
-const BookmarkOutlineIcon = (props) => <FontAwesomeIcon icon={faBookmark} {...props} />;
+const BookmarkOutlineIcon = (props) => <Icon src={BookmarkBorder} screenReaderText="Bookmark" {...props} />;
 
 export default BookmarkOutlineIcon;

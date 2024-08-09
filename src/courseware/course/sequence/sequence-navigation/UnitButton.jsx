@@ -42,8 +42,10 @@ const UnitButton = ({
       {showCompletion && complete ? <CompleteIcon size="sm" className="text-success ml-2" /> : null}
       {bookmarked ? (
         <BookmarkFilledIcon
-          className="text-primary small position-absolute"
-          style={{ top: '-3px', right: '5px' }}
+          className="unit-filled-bookmark text-primary small position-absolute"
+          style={{
+            top: '-3px', right: '2px', height: '20px', width: '20px',
+          }}
         />
       ) : null}
     </Button>
