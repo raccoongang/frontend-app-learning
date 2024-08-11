@@ -46,6 +46,7 @@ const BookmarkButton = ({
       onClick={toggleBookmark}
       state={state}
       disabledStates={['defaultProcessing', 'bookmarkedProcessing']}
+      // title={isBookmarked ? 'Remove bookmark' : 'Bookmark this page'}
       labels={{
         default: addBookmarkLabel,
         defaultProcessing: addBookmarkLabel,

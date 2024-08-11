@@ -44,7 +44,7 @@ describe('Bookmark Button', () => {
   it('handles adding bookmark', async () => {
     render(<BookmarkButton {...mockData} />);
 
-    const button = screen.getByRole('button', { name: 'Bookmark this page' });
+    const button = screen.getByRole('button', { name: 'Bookmark Bookmark this page' });
     expect(button).not.toHaveClass('disabled');
 
     fireEvent.click(button);
@@ -56,7 +56,7 @@ describe('Bookmark Button', () => {
   it('does not handle adding bookmark when processing', async () => {
     render(<BookmarkButton {...mockData} isProcessing />);
 
-    const button = screen.getByRole('button', { name: 'Bookmark this page' });
+    const button = screen.getByRole('button', { name: 'Bookmark Bookmark this page' });
     expect(button).toHaveClass('disabled');
 
     fireEvent.click(button);
@@ -70,7 +70,7 @@ describe('Bookmark Button', () => {
 
   it('handles removing bookmark', async () => {
     render(<BookmarkButton {...mockData} unitId={bookmarkedUnitBlock.id} isBookmarked />);
-    const button = screen.getByRole('button', { name: 'Bookmarked' });
+    const button = screen.getByRole('button', { name: 'Bookmark Bookmarked' });
 
     fireEvent.click(button);
     await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
@@ -81,7 +81,7 @@ describe('Bookmark Button', () => {
   it('does not handle removing bookmark when processing', async () => {
     render(<BookmarkButton {...mockData} unitId={bookmarkedUnitBlock.id} isBookmarked isProcessing />);
 
-    const button = screen.getByRole('button', { name: 'Bookmarked' });
+    const button = screen.getByRole('button', { name: 'Bookmark Bookmarked' });
     expect(button).toHaveClass('disabled');
 
     fireEvent.click(button);

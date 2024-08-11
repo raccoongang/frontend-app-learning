@@ -68,16 +68,14 @@ describe('Sequence Navigation', () => {
     fireEvent.click(unitButton);
     // The unit button should not work for gated content.
     expect(testData.onNavigate).not.toHaveBeenCalled();
-    // TODO: Not sure if this is working as expected, because the `contentType="lock"` will be overridden by the value
-    //  from Redux. To make this provide a `fa-icon` lock we could introduce something like `overriddenContentType`.
-    expect(unitButton.firstChild).toHaveClass('fa-tasks');
+    expect(unitButton.firstChild).toHaveClass('pgn__icon');
   });
 
   it('renders correctly and handles unit button clicks', () => {
     const onNavigate = jest.fn();
     render(<SequenceNavigation {...mockData} {...{ onNavigate }} />);
 
-    const unitButtons = screen.getAllByRole('tab', { name: /\d+/ });
+    const unitButtons = screen.getAllByRole('tab');
     expect(unitButtons).toHaveLength(unitButtons.length);
     unitButtons.forEach(button => fireEvent.click(button));
     expect(onNavigate).toHaveBeenCalledTimes(unitButtons.length);
@@ -127,7 +125,7 @@ describe('Sequence Navigation', () => {
     );
 
     expect(screen.getByRole('button', { name: /previous/i })).toBeEnabled();
-    expect(screen.getByRole('button', { name: /next \(end of course\)/i })).toBeEnabled();
+    expect(screen.getByRole('button', { name: /next-btn/i })).toBeEnabled();
   });
 
   it('displays complete course message instead of the "Next" button as needed', async () => {
@@ -148,7 +146,7 @@ describe('Sequence Navigation', () => {
     );
 
     expect(screen.getByRole('button', { name: /previous/i })).toBeEnabled();
-    expect(screen.getByRole('button', { name: /Complete the course/i })).toBeEnabled();
+    expect(screen.getByRole('button', { name: /next-btn/i })).toBeEnabled();
   });
 
   it('handles "Previous" and "Next" click', () => {

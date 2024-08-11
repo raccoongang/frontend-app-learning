@@ -49,9 +49,9 @@ describe('Sequence Navigation Dropdown', () => {
       // Only the current unit should be marked as active.
       getAllByRole(dropdownMenu, 'tab', { hidden: true }).forEach(button => {
         if (button.textContent === unit.display_name) {
-          expect(button).toHaveClass('active');
+          expect(button).toHaveClass('active', { exact: true });
         } else {
-          expect(button).not.toHaveClass('active');
+          expect(button).not.toHaveClass('active', { exact: true });
         }
       });
     });
