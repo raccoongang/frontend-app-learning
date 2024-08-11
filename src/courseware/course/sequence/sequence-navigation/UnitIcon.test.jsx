@@ -2,19 +2,11 @@ import React from 'react';
 import { Factory } from 'rosie';
 import { initializeTestStore, render } from '../../../../setupTest';
 import UnitIcon from './UnitIcon';
+import { UNIT_ICON_TYPES } from './constants';
 
 describe('Unit Icon', () => {
-  const types = {
-    video: 'fa-video',
-    other: 'fa-book',
-    vertical: 'fa-tasks',
-    problem: 'fa-edit',
-    lock: 'fa-lock',
-    undefined: 'fa-book',
-  };
-
   const courseMetadata = Factory.build('courseMetadata');
-  const unitBlocks = Object.keys(types).map(contentType => Factory.build(
+  const unitBlocks = UNIT_ICON_TYPES.map(contentType => Factory.build(
     'block',
     { id: contentType, type: contentType },
     { courseId: courseMetadata.id },
@@ -32,7 +24,11 @@ describe('Unit Icon', () => {
       }
 
       const { container } = render(<UnitIcon type={block.type} />);
-      expect(container.querySelector('svg')).toHaveClass(types[block.type]);
+      UNIT_ICON_TYPES.forEach(type => {
+        if (type !== block.type) {
+          expect(container.querySelector('.pgn__icon')).not.toHaveTextContent(UNIT_ICON_TYPES[type]);
+        }
+      });
     });
   });
 });

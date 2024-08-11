@@ -375,7 +375,7 @@ describe('Sequence', () => {
       render(<Sequence {...testData} />, { store: testStore });
       await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).toBeInTheDocument());
 
-      fireEvent.click(screen.getByRole('tab', { name: targetUnit.display_name }));
+      fireEvent.click(screen.getByTitle(targetUnit.display_name));
       expect(testData.unitNavigationHandler).toHaveBeenCalledWith(targetUnit.id);
       expect(sendTrackEvent).toHaveBeenCalledWith('edx.ui.lms.sequence.tab_selected', {
         current_tab: currentTabNumber,

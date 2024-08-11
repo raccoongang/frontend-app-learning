@@ -190,7 +190,7 @@ describe('CoursewareContainer', () => {
 
       expect(sequenceNavButtons[0]).toHaveTextContent('Previous');
       // Prove this button is rendering an SVG tasks icon, meaning it's a unit/vertical.
-      expect(sequenceNavButtons[1].querySelector('svg')).toHaveClass('fa-tasks');
+      expect(sequenceNavButtons[1].querySelector('.pgn__icon')).toHaveTextContent('vertical');
       expect(sequenceNavButtons[sequenceNavButtons.length - 1]).toHaveTextContent('Next');
     }
 
