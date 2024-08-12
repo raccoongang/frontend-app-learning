@@ -24,6 +24,8 @@ const NotificationTrigger = ({
     notificationStatus,
     setNotificationStatus,
     upgradeNotificationCurrentState,
+    toggleSidebar,
+    currentSidebar,
   } = useContext(SidebarContext);
   const [isOpenNotificationStatusBar, toggleNotificationStatusBar] = useState(false);
   const triggerRef = useRef(null);
@@ -53,19 +55,21 @@ const NotificationTrigger = ({
     UpdateUpgradeNotificationLastSeen();
     if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
       toggleNotificationStatusBar(true);
+      if (!currentSidebar) {
+        toggleSidebar(ID);
+        setSessionStorage(`notificationTrayFocus.${courseId}`, 'false');
+      }
     } else {
       toggleNotificationStatusBar(false);
     }
-    setSessionStorage(`notificationTrayFocus.${courseId}`, 'false');
   });
 
   const handleClick = () => {
-    setSessionStorage(`notificationTrayFocus.${courseId}`, String(isOpenNotificationStatusBar));
+    setSessionStorage(`notificationTrayFocus.${courseId}`, String(!isOpenNotificationStatusBar));
 
     if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
       toggleNotificationStatusBar(true);
       setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
-      // setSessionStorage(`notificationTrayFocus.${courseId}`, 'true');
     } else {
       toggleNotificationStatusBar(false);
       setSessionStorage(`notificationTrayStatus.${courseId}`, 'open');
@@ -74,15 +78,21 @@ const NotificationTrigger = ({
     onClick();
   };
 
-  if (getSessionStorage(`notificationTrayFocus.${courseId}`) === 'true') {
-    triggerRef.current?.focus();
-  }
-
-  // console.log('isOpenNotificationStatusBar ===>', isOpenNotificationStatusBar);
+  const handleKeyPress = (event) => {
+    if (event.key === 'Tab' && !event.shiftKey) {
+      event.preventDefault();
+      triggerRef.current?.blur();
+      const targetButton = document.querySelector('.btn-icon-primary');
+      if (targetButton) {
+        targetButton.focus();
+      }
+    }
+  };
 
   return (
     <SidebarTriggerBase
       onClick={handleClick}
+      onKeyDown={handleKeyPress}
       // ariaLabel={intl.formatMessage(messages.openNotificationTrigger)}
       ariaLabel="notifications tray"
       isOpenNotificationStatusBar={isOpenNotificationStatusBar}

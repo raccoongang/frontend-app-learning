@@ -3,11 +3,13 @@ import { Icon, IconButton } from '@edx/paragon';
 import { ArrowBackIos, Close } from '@edx/paragon/icons';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useRef,
+} from 'react';
 import { useEventListener } from '../../../../generic/hooks';
 import messages from '../../messages';
 import SidebarContext from '../SidebarContext';
-import { setSessionStorage } from '../../../../data/sessionStorage';
+import { setSessionStorage, getSessionStorage } from '../../../../data/sessionStorage';
 
 const SidebarBase = ({
   intl,
@@ -25,6 +27,13 @@ const SidebarBase = ({
     shouldDisplayFullScreen,
     currentSidebar,
   } = useContext(SidebarContext);
+  const triggerRef = useRef(null);
+
+  useEffect(() => {
+    if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open' && getSessionStorage(`notificationTrayFocus.${courseId}`) === 'true') {
+      triggerRef?.current?.focus();
+    }
+  });
 
   const receiveMessage = useCallback(({ data }) => {
     const { type } = data;
@@ -39,11 +48,22 @@ const SidebarBase = ({
     toggleSidebar(null);
     setSessionStorage(`notificationTrayFocus.${courseId}`, 'true');
     setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
+    const targetButton = document.querySelector('.sidebar-trigger-btn');
+    if (targetButton) {
+      targetButton.focus();
+    }
   };
 
   const handleKeyDown = useCallback((event) => {
     if (event.key === 'Escape') {
       handleNotificationClose();
+    }
+    if (event.shiftKey && event.key === 'Tab' && event.target === triggerRef.current) {
+      event.preventDefault();
+      const targetButton = document.querySelector('.sidebar-trigger-btn');
+      if (targetButton) {
+        targetButton.focus();
+      }
     }
   }, [handleNotificationClose]);
 
@@ -53,6 +73,12 @@ const SidebarBase = ({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]);
+
+  const handleCloseNotificationTray = () => {
+    toggleSidebar(null);
+    setSessionStorage(`notificationTrayFocus.${courseId}`, 'true');
+    setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
+  };
 
   return (
     <section
@@ -68,15 +94,15 @@ const SidebarBase = ({
       {shouldDisplayFullScreen ? (
         <div
           className="pt-2 pb-2.5 border-bottom border-light-400 d-flex align-items-center ml-2"
-          onClick={() => toggleSidebar(null)}
-          onKeyDown={() => toggleSidebar(null)}
+          onClick={handleCloseNotificationTray}
+          onKeyDown={handleCloseNotificationTray}
           role="button"
           tabIndex="0"
           alt={intl.formatMessage(messages.responsiveCloseNotificationTray)}
         >
           <Icon src={ArrowBackIos} />
           <span className="font-weight-bold m-2 d-inline-block">
-            {intl.formatMessage(messages.responsiveCloseNotificationTray)}
+            {intl.formatMessage(messages.responsiveCloseNotificationTray)}123
           </span>
         </div>
       ) : null}
@@ -95,12 +121,14 @@ const SidebarBase = ({
               : (
                 <div className="d-inline-flex mr-2 mt-1.5 ml-auto">
                   <IconButton
+                    className="close-btn"
                     src={Close}
                     size="sm"
+                    ref={triggerRef}
                     iconAs={Icon}
                     onClick={handleNotificationClose}
                     alt={intl.formatMessage(messages.closeNotificationTrigger)}
-                  />123
+                  />
                 </div>
               )}
           </div>
