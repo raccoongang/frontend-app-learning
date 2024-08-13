@@ -283,7 +283,6 @@ const UpgradeNotification = ({
   upsellPageName,
   userTimezone,
   verifiedMode,
-  // eslint-disable-next-line react/prop-types
   currentSidebar,
 }) => {
   const dateNow = Date.now();
@@ -291,7 +290,7 @@ const UpgradeNotification = ({
   const correctedTime = new Date(dateNow + timeOffsetMillis);
   const accessExpirationDate = accessExpiration ? new Date(accessExpiration.expirationDate) : null;
   const pastExpirationDeadline = accessExpiration ? new Date(dateNow) > accessExpirationDate : false;
-  const upgradeButtonRef = useRef(null);
+  const upgradeBtnRef = useRef(null);
 
   const eventProperties = {
     org_key: org,
@@ -313,10 +312,10 @@ const UpgradeNotification = ({
   }, []);
 
   useEffect(() => {
-    if (upgradeButtonRef.current && currentSidebar === 'NOTIFICATIONS') {
-      upgradeButtonRef?.current.focus();
+    if (currentSidebar === 'NOTIFICATIONS' && upgradeBtnRef.current) {
+      upgradeBtnRef.current.focus();
     }
-  }, [currentSidebar, upgradeButtonRef]);
+  }, [currentSidebar, upgradeBtnRef]);
 
   if (!verifiedMode) {
     return null;
@@ -460,7 +459,7 @@ const UpgradeNotification = ({
         onClick={logClickPastExpiration}
         href={marketingUrl}
         block
-        ref={upgradeButtonRef}
+        ref={upgradeBtnRef}
       >
         View Course Details
       </Button>
@@ -533,6 +532,7 @@ UpgradeNotification.propTypes = {
     price: PropTypes.number.isRequired,
     upgradeUrl: PropTypes.string.isRequired,
   }),
+  currentSidebar: PropTypes.string.isRequired,
 };
 
 UpgradeNotification.defaultProps = {

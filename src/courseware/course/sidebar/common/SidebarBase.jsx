@@ -36,6 +36,7 @@ const SidebarBase = ({
     if (isOpenNotificationTray && isFocusedNotificationTray && closeBtnRef.current) {
       closeBtnRef.current.focus();
     }
+
     if (shouldDisplayFullScreen) {
       responsiveCloseNotificationTrayRef.current?.focus();
     }
@@ -78,7 +79,7 @@ const SidebarBase = ({
       event.preventDefault();
       focusSidebarTriggerBtn();
     }
-  }, []);
+  }, [focusSidebarTriggerBtn, closeBtnRef]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -89,22 +90,28 @@ const SidebarBase = ({
 
   const handleKeyDownNotificationTray = (event) => {
     const { key, shiftKey } = event;
+    const currentElement = event.target === responsiveCloseNotificationTrayRef.current;
+    const sidebarTriggerBtn = document.querySelector('.call-to-action-btn');
 
-    if (key === 'Enter' && event.target === responsiveCloseNotificationTrayRef.current) {
-      handleCloseNotificationTray();
-    }
+    switch (key) {
+      case 'Enter':
+        if (currentElement) {
+          handleCloseNotificationTray();
+        }
+        break;
 
-    if (key === 'Tab' && !shiftKey) {
-      const sidebarTriggerBtn = document.querySelector('.call-to-action-btn');
-      if (sidebarTriggerBtn) {
-        event.preventDefault();
-        sidebarTriggerBtn.focus();
-      }
-    }
+      case 'Tab':
+        if (!shiftKey && sidebarTriggerBtn) {
+          event.preventDefault();
+          sidebarTriggerBtn.focus();
+        } else if (shiftKey) {
+          event.preventDefault();
+          responsiveCloseNotificationTrayRef.current?.focus();
+        }
+        break;
 
-    if (shiftKey && key === 'Tab') {
-      event.preventDefault();
-      responsiveCloseNotificationTrayRef.current?.focus();
+      default:
+        break;
     }
   };
 
@@ -131,7 +138,7 @@ const SidebarBase = ({
         >
           <Icon src={ArrowBackIos} />
           <span className="font-weight-bold m-2 d-inline-block">
-            {intl.formatMessage(messages.responsiveCloseNotificationTray)}123
+            {intl.formatMessage(messages.responsiveCloseNotificationTray)}
           </span>
         </div>
       ) : null}

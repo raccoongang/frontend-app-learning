@@ -53,41 +53,48 @@ const NotificationTrigger = ({
 
   useEffect(() => {
     UpdateUpgradeNotificationLastSeen();
-    if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
-      toggleNotificationStatusBar(true);
-      if (!currentSidebar) {
-        toggleSidebar(ID);
-        setSessionStorage(`notificationTrayFocus.${courseId}`, 'false');
-      }
-    } else {
-      toggleNotificationStatusBar(false);
+
+    const notificationTrayStatus = getSessionStorage(`notificationTrayStatus.${courseId}`);
+    const isNotificationTrayOpen = notificationTrayStatus === 'open';
+
+    toggleNotificationStatusBar(isNotificationTrayOpen);
+
+    if (isNotificationTrayOpen && !currentSidebar) {
+      toggleSidebar(ID);
+      setSessionStorage(`notificationTrayFocus.${courseId}`, 'false');
     }
-  });
+  }, [courseId, currentSidebar, ID]);
 
   const handleClick = () => {
-    setSessionStorage(`notificationTrayFocus.${courseId}`, String(!isOpenNotificationStatusBar));
+    const newFocusStatus = !isOpenNotificationStatusBar;
+    setSessionStorage(`notificationTrayFocus.${courseId}`, String(newFocusStatus));
 
-    if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
-      toggleNotificationStatusBar(true);
+    const isNotificationTrayOpen = getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open';
+
+    if (isNotificationTrayOpen) {
+      toggleNotificationStatusBar(false);
       setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
     } else {
-      toggleNotificationStatusBar(false);
+      toggleNotificationStatusBar(true);
       setSessionStorage(`notificationTrayStatus.${courseId}`, 'open');
       sidebarTriggerBtnRef.current?.focus();
     }
+
     onClick();
   };
 
   const handleKeyPress = (event) => {
     if (event.key === 'Tab' && !event.shiftKey) {
-      if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
+      const isNotificationTrayOpen = getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open';
+
+      if (isNotificationTrayOpen) {
         event.preventDefault();
       }
+
       sidebarTriggerBtnRef.current?.blur();
+
       const targetButton = document.querySelector('.btn-icon-primary');
-      if (targetButton) {
-        targetButton.focus();
-      }
+      targetButton?.focus();
     }
   };
 
