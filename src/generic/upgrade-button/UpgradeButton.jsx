@@ -12,8 +12,6 @@ const UpgradeButton = (props) => {
     variant,
     onClick,
     verifiedMode,
-    // eslint-disable-next-line react/prop-types
-    myRef,
     ...rest
   } = props;
 
@@ -25,7 +23,6 @@ const UpgradeButton = (props) => {
       variant={variant}
       href={url}
       onClick={onClick}
-      ref={myRef}
       {...rest}
     >
       <div>

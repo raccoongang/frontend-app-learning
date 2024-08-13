@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import { getLocalStorage, setLocalStorage } from '../../../../../data/localStorage';
 import { getSessionStorage, setSessionStorage } from '../../../../../data/sessionStorage';
-// import messages from '../../../messages';
+import messages from '../../../messages';
 import SidebarTriggerBase from '../../common/TriggerBase';
 import SidebarContext from '../../SidebarContext';
 
@@ -15,7 +15,7 @@ import NotificationIcon from './NotificationIcon';
 export const ID = 'NOTIFICATIONS';
 
 const NotificationTrigger = ({
-  // intl,
+  intl,
   onClick,
 }) => {
   const {
@@ -28,7 +28,7 @@ const NotificationTrigger = ({
     currentSidebar,
   } = useContext(SidebarContext);
   const [isOpenNotificationStatusBar, toggleNotificationStatusBar] = useState(false);
-  const triggerRef = useRef(null);
+  const sidebarTriggerBtnRef = useRef(null);
 
   /* Re-show a red dot beside the notification trigger for each of the 7 UpgradeNotification stages
    The upgradeNotificationCurrentState prop will be available after UpgradeNotification mounts. Once available,
@@ -73,15 +73,17 @@ const NotificationTrigger = ({
     } else {
       toggleNotificationStatusBar(false);
       setSessionStorage(`notificationTrayStatus.${courseId}`, 'open');
-      triggerRef.current?.focus();
+      sidebarTriggerBtnRef.current?.focus();
     }
     onClick();
   };
 
   const handleKeyPress = (event) => {
     if (event.key === 'Tab' && !event.shiftKey) {
-      event.preventDefault();
-      triggerRef.current?.blur();
+      if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open') {
+        event.preventDefault();
+      }
+      sidebarTriggerBtnRef.current?.blur();
       const targetButton = document.querySelector('.btn-icon-primary');
       if (targetButton) {
         targetButton.focus();
@@ -93,11 +95,10 @@ const NotificationTrigger = ({
     <SidebarTriggerBase
       onClick={handleClick}
       onKeyDown={handleKeyPress}
-      // ariaLabel={intl.formatMessage(messages.openNotificationTrigger)}
-      ariaLabel="notifications tray"
+      ariaLabel={intl.formatMessage(messages.openNotificationTrigger)}
       isOpenNotificationStatusBar={isOpenNotificationStatusBar}
       sectionId={sectionId}
-      triggerRef={triggerRef}
+      ref={sidebarTriggerBtnRef}
     >
       <NotificationIcon status={notificationStatus} notificationColor="bg-danger-500" />
     </SidebarTriggerBase>
@@ -105,7 +106,7 @@ const NotificationTrigger = ({
 };
 
 NotificationTrigger.propTypes = {
-  // intl: intlShape.isRequired,
+  intl: intlShape.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 

@@ -456,6 +456,7 @@ const UpgradeNotification = ({
   if (pastExpirationDeadline) {
     callToActionButton = (
       <Button
+        className="call-to-action-btn"
         onClick={logClickPastExpiration}
         href={marketingUrl}
         block
@@ -467,11 +468,11 @@ const UpgradeNotification = ({
   } else {
     callToActionButton = (
       <UpgradeButton
+        className="call-to-action-btn"
         offer={offer}
         onClick={logClick}
         verifiedMode={verifiedMode}
         block
-        myRef={upgradeButtonRef}
       />
     );
   }

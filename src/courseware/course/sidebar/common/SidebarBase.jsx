@@ -27,11 +27,17 @@ const SidebarBase = ({
     shouldDisplayFullScreen,
     currentSidebar,
   } = useContext(SidebarContext);
-  const triggerRef = useRef(null);
+  const closeBtnRef = useRef(null);
+  const responsiveCloseNotificationTrayRef = useRef(null);
+  const isOpenNotificationTray = getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open';
+  const isFocusedNotificationTray = getSessionStorage(`notificationTrayFocus.${courseId}`) === 'true';
 
   useEffect(() => {
-    if (getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open' && getSessionStorage(`notificationTrayFocus.${courseId}`) === 'true') {
-      triggerRef?.current?.focus();
+    if (isOpenNotificationTray && isFocusedNotificationTray && closeBtnRef.current) {
+      closeBtnRef.current.focus();
+    }
+    if (shouldDisplayFullScreen) {
+      responsiveCloseNotificationTrayRef.current?.focus();
     }
   });
 
@@ -44,28 +50,35 @@ const SidebarBase = ({
 
   useEventListener('message', receiveMessage);
 
-  const handleNotificationClose = () => {
+  const focusSidebarTriggerBtn = () => {
+    const performFocus = () => {
+      const sidebarTriggerBtn = document.querySelector('.sidebar-trigger-btn');
+      if (sidebarTriggerBtn) {
+        sidebarTriggerBtn.focus();
+      }
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(performFocus);
+    });
+  };
+
+  const handleCloseNotificationTray = () => {
     toggleSidebar(null);
     setSessionStorage(`notificationTrayFocus.${courseId}`, 'true');
     setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
-    const targetButton = document.querySelector('.sidebar-trigger-btn');
-    if (targetButton) {
-      targetButton.focus();
-    }
+    focusSidebarTriggerBtn();
   };
 
   const handleKeyDown = useCallback((event) => {
-    if (event.key === 'Escape') {
-      handleNotificationClose();
-    }
-    if (event.shiftKey && event.key === 'Tab' && event.target === triggerRef.current) {
+    const { key, shiftKey, target } = event;
+
+    // Shift + Tab
+    if (shiftKey && key === 'Tab' && target === closeBtnRef.current) {
       event.preventDefault();
-      const targetButton = document.querySelector('.sidebar-trigger-btn');
-      if (targetButton) {
-        targetButton.focus();
-      }
+      focusSidebarTriggerBtn();
     }
-  }, [handleNotificationClose]);
+  }, []);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -74,10 +87,25 @@ const SidebarBase = ({
     };
   }, [handleKeyDown]);
 
-  const handleCloseNotificationTray = () => {
-    toggleSidebar(null);
-    setSessionStorage(`notificationTrayFocus.${courseId}`, 'true');
-    setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
+  const handleKeyDownNotificationTray = (event) => {
+    const { key, shiftKey } = event;
+
+    if (key === 'Enter' && event.target === responsiveCloseNotificationTrayRef.current) {
+      handleCloseNotificationTray();
+    }
+
+    if (key === 'Tab' && !shiftKey) {
+      const sidebarTriggerBtn = document.querySelector('.call-to-action-btn');
+      if (sidebarTriggerBtn) {
+        event.preventDefault();
+        sidebarTriggerBtn.focus();
+      }
+    }
+
+    if (shiftKey && key === 'Tab') {
+      event.preventDefault();
+      responsiveCloseNotificationTrayRef.current?.focus();
+    }
   };
 
   return (
@@ -95,8 +123,9 @@ const SidebarBase = ({
         <div
           className="pt-2 pb-2.5 border-bottom border-light-400 d-flex align-items-center ml-2"
           onClick={handleCloseNotificationTray}
-          onKeyDown={handleCloseNotificationTray}
+          onKeyDown={handleKeyDownNotificationTray}
           role="button"
+          ref={responsiveCloseNotificationTrayRef}
           tabIndex="0"
           alt={intl.formatMessage(messages.responsiveCloseNotificationTray)}
         >
@@ -121,12 +150,11 @@ const SidebarBase = ({
               : (
                 <div className="d-inline-flex mr-2 mt-1.5 ml-auto">
                   <IconButton
-                    className="close-btn"
                     src={Close}
                     size="sm"
-                    ref={triggerRef}
+                    ref={closeBtnRef}
                     iconAs={Icon}
-                    onClick={handleNotificationClose}
+                    onClick={handleCloseNotificationTray}
                     alt={intl.formatMessage(messages.closeNotificationTrigger)}
                   />
                 </div>
