@@ -13,6 +13,7 @@ import * as celebrationUtils from './celebration/utils';
 import Course from './Course';
 import { executeThunk } from '../../utils';
 import * as thunks from '../data/thunks';
+import messages from './messages';
 
 jest.mock('@edx/frontend-platform/analytics');
 
@@ -134,7 +135,7 @@ describe('Course', () => {
     localStorage.setItem('showDiscussionSidebar', false);
     render(<Course {...mockData} />);
 
-    const notificationTrigger = screen.getByRole('button', { name: /Notifications tray/i });
+    const notificationTrigger = screen.getByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     expect(notificationTrigger).toBeInTheDocument();
     expect(notificationTrigger.parentNode).toHaveClass('border-primary-700');
     fireEvent.click(notificationTrigger);
@@ -149,11 +150,11 @@ describe('Course', () => {
 
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
     expect(sessionStorage.getItem(`notificationTrayFocus.${mockData.courseId}`)).toBe('"false"');
-    const notificationShowButton = await screen.findByRole('button', { name: /Notifications tray/i });
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     expect(screen.queryByRole('region', { name: /notification tray/i })).not.toHaveClass('d-none');
     expect(notificationShowButton).toHaveAttribute('aria-expanded', 'true');
     expect(notificationShowButton).toHaveAttribute('aria-controls', sectionId);
-    const notificationTrayCloseBtn = screen.getByRole('button', { name: /close notification tray/i });
+    const notificationTrayCloseBtn = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
     expect(notificationTrayCloseBtn).not.toHaveFocus();
 
     fireEvent.click(notificationShowButton);
@@ -175,9 +176,9 @@ describe('Course', () => {
     localStorage.setItem('showDiscussionSidebar', false);
     render(<Course {...mockData} />);
 
-    const notificationShowButton = await screen.findByRole('button', { name: /Notifications tray/i });
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
 
-    const notificationTrayCloseBtn = screen.getByRole('button', { name: /close notification tray/i });
+    const notificationTrayCloseBtn = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
     fireEvent.click(notificationTrayCloseBtn);
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
@@ -197,9 +198,9 @@ describe('Course', () => {
     localStorage.setItem('showDiscussionSidebar', false);
     render(<Course {...mockData} />);
 
-    const notificationShowButton = await screen.findByRole('button', { name: /Notifications tray/i });
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
 
-    const notificationTrayCloseBtn = screen.getByRole('button', { name: /close notification tray/i });
+    const notificationTrayCloseBtn = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
     fireEvent.click(notificationTrayCloseBtn);
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
@@ -235,9 +236,9 @@ describe('Course', () => {
     localStorage.setItem('showDiscussionSidebar', false);
     render(<Course {...mockData} />);
 
-    const notificationShowButton = await screen.findByRole('button', { name: /Notifications tray/i });
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
 
-    const notificationTrayCloseBtn = screen.getByRole('button', { name: /close notification tray/i });
+    const notificationTrayCloseBtn = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
     fireEvent.click(notificationTrayCloseBtn);
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
@@ -255,7 +256,7 @@ describe('Course', () => {
   it('handles reload persisting notification tray status', async () => {
     sessionStorage.clear();
     render(<Course {...mockData} />);
-    const notificationShowButton = await screen.findByRole('button', { name: /Notifications tray/i });
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     fireEvent.click(notificationShowButton);
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
 
@@ -281,7 +282,7 @@ describe('Course', () => {
 
     render(<Course {...mockData} />);
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
-    const notificationShowButton = await screen.findByRole('button', { name: /Notifications tray/i });
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     fireEvent.click(notificationShowButton);
 
     // Verify sessionStorage was updated for the original course

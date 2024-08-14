@@ -60,7 +60,9 @@ const NotificationTrigger = ({
     toggleNotificationStatusBar(isNotificationTrayOpen);
 
     if (isNotificationTrayOpen && !currentSidebar) {
-      toggleSidebar(ID);
+      if (toggleSidebar) {
+        toggleSidebar(ID);
+      }
       setSessionStorage(`notificationTrayFocus.${courseId}`, 'false');
     }
   }, [courseId, currentSidebar, ID]);

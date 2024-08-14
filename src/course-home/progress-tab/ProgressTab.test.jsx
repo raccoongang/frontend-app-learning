@@ -1182,42 +1182,38 @@ describe('Progress Tab', () => {
     });
 
     it('Shows not available messaging before certificates are available to nonpassing learners when theres no certificate data', async () => {
-      const tomorrowDate = new Date();
       setMetadata({
         can_view_certificate: false,
         is_enrolled: true,
       });
       setTabData({
-        end: tomorrowDate,
+        end: tomorrow.toISOString(),
         certificate_data: undefined,
       });
       await fetchAndRender();
-      const formattedDate = tomorrowDate.toLocaleDateString('en-US', {
+      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${tomorrow.toLocaleDateString('en-us', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-      });
-      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${formattedDate}.`)).toBeInTheDocument();
+      })}.`)).toBeInTheDocument();
     });
 
     it('Shows not available messaging before certificates are available to passing learners when theres no certificate data', async () => {
-      const tomorrowDate = new Date();
       setMetadata({
         can_view_certificate: false,
         is_enrolled: true,
       });
       setTabData({
-        end: tomorrowDate,
+        end: tomorrow.toISOString(),
         user_has_passing_grade: true,
         certificate_data: undefined,
       });
       await fetchAndRender();
-      const formattedDate = tomorrowDate.toLocaleDateString('en-US', {
+      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${tomorrow.toLocaleDateString('en-us', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-      });
-      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${formattedDate}.`)).toBeInTheDocument();
+      })}.`)).toBeInTheDocument();
     });
 
     it('Shows certificate_available_date if learner is passing', async () => {
