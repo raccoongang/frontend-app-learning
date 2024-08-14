@@ -93,7 +93,7 @@ const NotificationTrigger = ({
 
       sidebarTriggerBtnRef.current?.blur();
 
-      const targetButton = document.querySelector('.btn-icon-primary');
+      const targetButton = document.querySelector('.sidebar-close-btn');
       targetButton?.focus();
     }
   };

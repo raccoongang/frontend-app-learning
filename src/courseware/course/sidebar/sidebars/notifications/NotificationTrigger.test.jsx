@@ -62,7 +62,7 @@ describe('Notification Trigger', () => {
     };
     renderWithProvider(testData, toggleNotificationTray);
 
-    const notificationTrigger = screen.getByRole('button', { name: /Show notification tray/i });
+    const notificationTrigger = screen.getByRole('button', { name: /Notifications tray/i });
     expect(notificationTrigger).toBeInTheDocument();
     fireEvent.click(notificationTrigger);
     expect(toggleNotificationTray).toHaveBeenCalledTimes(1);

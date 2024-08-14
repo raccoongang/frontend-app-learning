@@ -370,37 +370,41 @@ describe('Course Exit Pages', () => {
     });
 
     it('Shows not available messaging before certificates are available to nonpassing learners when theres no certificate data', async () => {
+      const tomorrowDate = new Date();
       setMetadata({
         is_enrolled: true,
-        end: tomorrow.toISOString(),
+        end: tomorrowDate,
         user_has_passing_grade: false,
         certificate_data: undefined,
       }, {
         can_view_certificate: false,
       });
-      await fetchAndRender(<CourseCelebration />);
-      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${tomorrow.toLocaleDateString('en-us', {
+      const formattedDate = tomorrowDate.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-      })}.`)).toBeInTheDocument();
+      });
+      await fetchAndRender(<CourseCelebration />);
+      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${formattedDate}.`)).toBeInTheDocument();
     });
 
     it('Shows not available messaging before certificates are available to passing learners when theres no certificate data', async () => {
+      const tomorrowDate = new Date();
       setMetadata({
         is_enrolled: true,
-        end: tomorrow.toISOString(),
+        end: tomorrowDate,
         user_has_passing_grade: true,
         certificate_data: undefined,
       }, {
         can_view_certificate: false,
       });
-      await fetchAndRender(<CourseCelebration />);
-      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${tomorrow.toLocaleDateString('en-us', {
+      const formattedDate = tomorrowDate.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-      })}.`)).toBeInTheDocument();
+      });
+      await fetchAndRender(<CourseCelebration />);
+      expect(screen.getByText(`Final grades and any earned certificates are scheduled to be available after ${formattedDate}.`)).toBeInTheDocument();
     });
 
     it('Shows certificate_available_date if learner is passing', async () => {

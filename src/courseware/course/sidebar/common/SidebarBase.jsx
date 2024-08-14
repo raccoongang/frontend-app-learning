@@ -157,6 +157,7 @@ const SidebarBase = ({
               : (
                 <div className="d-inline-flex mr-2 mt-1.5 ml-auto">
                   <IconButton
+                    className="sidebar-close-btn"
                     src={Close}
                     size="sm"
                     ref={closeBtnRef}
