@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import React, {

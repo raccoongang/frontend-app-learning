@@ -145,13 +145,7 @@ const SidebarBase = ({
       {showTitleBar && (
         <>
           <div className="d-flex align-items-center">
-            <h2
-              className="p-2.5 d-inline-block"
-              style={{
-                fontSize: '1.125rem', fontWeight: '400', color: '#454545', margin: '0', lineHeight: '1.5556',
-              }}
-            >{title}
-            </h2>
+            <h2 className="sidebar-base-title p-2.5 d-inline-block">{title}</h2>
             {shouldDisplayFullScreen
               ? null
               : (
