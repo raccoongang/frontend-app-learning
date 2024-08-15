@@ -20,6 +20,12 @@ const GradeSummaryHeader = ({ intl, allOfSomeAssignmentTypeIsLocked }) => {
   } = useModel('progress', courseId);
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      setShowTooltip(false);
+    }
+  };
+
   return (
     <div className="row w-100 m-0 align-items-center">
       <h3 className="h4 mb-3 mr-1">{intl.formatMessage(messages.gradeSummary)}</h3>
@@ -38,6 +44,7 @@ const GradeSummaryHeader = ({ intl, allOfSomeAssignmentTypeIsLocked }) => {
         <IconButton
           onClick={() => { setShowTooltip(!showTooltip); }}
           onBlur={() => { setShowTooltip(false); }}
+          onKeyDown={handleKeyDown}
           alt={intl.formatMessage(messages.gradeSummaryTooltipAlt)}
           src={InfoOutline}
           iconAs={Icon}
