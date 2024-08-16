@@ -145,7 +145,7 @@ const SidebarBase = ({
       {showTitleBar && (
         <>
           <div className="d-flex align-items-center">
-            <h2 className="sidebar-base-title p-2.5 d-inline-block">{title}</h2>
+            <h2 className="sidebar-base-title p-2.5 d-inline-block m-0 text-gray-700">{title}</h2>
             {shouldDisplayFullScreen
               ? null
               : (
