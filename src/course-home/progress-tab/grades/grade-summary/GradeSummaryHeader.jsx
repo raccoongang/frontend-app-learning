@@ -20,8 +20,8 @@ const GradeSummaryHeader = ({ intl, allOfSomeAssignmentTypeIsLocked }) => {
   } = useModel('progress', courseId);
   const [showTooltip, setShowTooltip] = useState(false);
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Escape') {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
       setShowTooltip(false);
     }
   };
