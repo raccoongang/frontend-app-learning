@@ -24,6 +24,23 @@ const UnitButton = ({
     onClick(unitId);
   }, [onClick, unitId]);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      onClick(unitId);
+
+      const performFocus = () => {
+        const targetElement = document.getElementById('bookmark-button');
+        if (targetElement) {
+          targetElement.focus();
+        }
+      };
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(performFocus);
+      });
+    }
+  };
+
   return (
     <Button
       className={classNames({
@@ -33,9 +50,12 @@ const UnitButton = ({
       variant="link"
       onClick={handleClick}
       title={title}
-      role="tab"
-      aria-selected={isActive}
+      role="tabpanel"
+      tabIndex={isActive ? 0 : -1}
       aria-controls={title}
+      id={title}
+      aria-labelledby={title}
+      onKeyDown={handleKeyDown}
     >
       <UnitIcon type={contentType} />
       {showTitle && <span className="unit-title">{title}</span>}

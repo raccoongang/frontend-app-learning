@@ -168,7 +168,7 @@
   }
 
   .sequence-navigation-tabs {
-    .btn {
+    .btn:not(:last-of-type):not(:first-of-type) {
       flex-basis: 100%;
       min-width: 2rem;
     }

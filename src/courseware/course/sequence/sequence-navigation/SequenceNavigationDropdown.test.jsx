@@ -47,7 +47,7 @@ describe('Sequence Navigation Dropdown', () => {
       });
       const dropdownMenu = container.querySelector('.dropdown-menu');
       // Only the current unit should be marked as active.
-      getAllByRole(dropdownMenu, 'tab', { hidden: true }).forEach(button => {
+      getAllByRole(dropdownMenu, 'tabpanel', { hidden: true }).forEach(button => {
         if (button.textContent === unit.display_name) {
           expect(button).toHaveClass('active', { exact: true });
         } else {
@@ -66,7 +66,7 @@ describe('Sequence Navigation Dropdown', () => {
       fireEvent.click(dropdownToggle);
     });
     const dropdownMenu = container.querySelector('.dropdown-menu');
-    getAllByRole(dropdownMenu, 'tab', { hidden: true }).forEach(button => fireEvent.click(button));
+    getAllByRole(dropdownMenu, 'tabpanel', { hidden: true }).forEach(button => fireEvent.click(button));
     expect(onNavigate).toHaveBeenCalledTimes(unitBlocks.length);
     unitBlocks.forEach((unit, index) => {
       expect(onNavigate).toHaveBeenNthCalledWith(index + 1, unit.id);
