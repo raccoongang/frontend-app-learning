@@ -137,7 +137,7 @@ describe('Unit Button', () => {
   it('not focuses bookmark-button after pressing other keys', async () => {
     jest.useFakeTimers();
 
-    render(
+    const { getByRole } = render(
       <>
         <UnitButton {...mockData} />
         <button id="bookmark-button" type="button">Bookmark</button>
@@ -146,12 +146,10 @@ describe('Unit Button', () => {
 
     jest.advanceTimersByTime(200);
 
-    await act(async () => {
-      await userEvent.keyboard('{A}');
-    });
+    await userEvent.keyboard('{A}');
 
     await waitFor(() => {
-      expect(document.activeElement.id).not.toBe('bookmark-button');
+      expect(getByRole('button', { name: 'Bookmark' })).not.toHaveFocus();
     });
   });
 });
