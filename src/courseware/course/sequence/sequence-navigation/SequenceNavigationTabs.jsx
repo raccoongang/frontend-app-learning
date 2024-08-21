@@ -1,18 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useArrowKeyNavigation } from '@edx/paragon';
 
 import UnitButton from './UnitButton';
 import SequenceNavigationDropdown from './SequenceNavigationDropdown';
 import useIndexOfLastVisibleChild from '../../../../generic/tabs/useIndexOfLastVisibleChild';
 
 const SequenceNavigationTabs = ({
-  unitIds, unitId, showCompletion, onNavigate,
+  unitIds, unitId, showCompletion, onNavigate, previousButton, nextButton,
 }) => {
+  const parentRef = useArrowKeyNavigation({
+    selectors: 'button:not(:disabled)',
+    ignoredKeys: ['ArrowUp', 'ArrowDown'],
+  });
+
   const [
     indexOfLastVisibleChild,
     containerRef,
     invisibleStyle,
   ] = useIndexOfLastVisibleChild();
+
   const shouldDisplayDropdown = indexOfLastVisibleChild === -1;
 
   return (
@@ -22,7 +29,9 @@ const SequenceNavigationTabs = ({
           className="sequence-navigation-tabs d-flex flex-grow-1"
           style={shouldDisplayDropdown ? invisibleStyle : null}
           role="tablist"
+          ref={parentRef}
         >
+          {previousButton}
           {unitIds.map(buttonUnitId => (
             <UnitButton
               key={buttonUnitId}
@@ -32,6 +41,7 @@ const SequenceNavigationTabs = ({
               onClick={onNavigate}
             />
           ))}
+          {nextButton}
         </div>
       </div>
       {shouldDisplayDropdown && (
@@ -51,6 +61,8 @@ SequenceNavigationTabs.propTypes = {
   onNavigate: PropTypes.func.isRequired,
   showCompletion: PropTypes.bool.isRequired,
   unitIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  previousButton: PropTypes.node.isRequired,
+  nextButton: PropTypes.node.isRequired,
 };
 
 export default SequenceNavigationTabs;

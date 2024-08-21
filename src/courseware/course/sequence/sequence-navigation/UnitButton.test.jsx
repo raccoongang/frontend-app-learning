@@ -1,8 +1,10 @@
 import React from 'react';
 import { Factory } from 'rosie';
+import userEvent from '@testing-library/user-event';
 import {
-  fireEvent, initializeTestStore, render, screen,
+  fireEvent, initializeTestStore, render, screen, waitFor, act,
 } from '../../../../setupTest';
+
 import UnitButton from './UnitButton';
 
 describe('Unit Button', () => {
@@ -33,12 +35,25 @@ describe('Unit Button', () => {
 
   it('hides title by default', () => {
     render(<UnitButton {...mockData} />);
-    expect(screen.getByRole('tab')).not.toHaveTextContent(unit.display_name);
+    expect(screen.getByRole('tabpanel')).not.toHaveTextContent(unit.display_name);
   });
 
   it('shows title', () => {
     render(<UnitButton {...mockData} showTitle />);
-    expect(screen.getByRole('tab')).toHaveTextContent(unit.display_name);
+    expect(screen.getByRole('tabpanel')).toHaveTextContent(unit.display_name);
+  });
+
+  it('check button attributes', () => {
+    render(<UnitButton {...mockData} showTitle />);
+    expect(screen.getByRole('tabpanel')).toHaveAttribute('id', unit.display_name);
+    expect(screen.getByRole('tabpanel')).toHaveAttribute('aria-controls', unit.display_name);
+    expect(screen.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', unit.display_name);
+    expect(screen.getByRole('tabpanel')).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('button with isActive prop has tabindex 0', () => {
+    render(<UnitButton {...mockData} isActive />);
+    expect(screen.getByRole('tabpanel')).toHaveAttribute('tabindex', '0');
   });
 
   it('does not show completion for non-completed unit', () => {
@@ -79,7 +94,64 @@ describe('Unit Button', () => {
   it('handles the click', () => {
     const onClick = jest.fn();
     render(<UnitButton {...mockData} onClick={onClick} />);
-    fireEvent.click(screen.getByRole('tab'));
+    fireEvent.click(screen.getByRole('tabpanel'));
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('focuses bookmark-button after pressing Enter or Space', async () => {
+    jest.useFakeTimers();
+
+    const { container } = render(
+      <>
+        <UnitButton {...mockData} />
+        <button id="bookmark-button" type="button">Bookmark</button>
+      </>,
+    );
+
+    const bookmarkButton = container.querySelector('#bookmark-button');
+    bookmarkButton.focus();
+
+    jest.advanceTimersByTime(200);
+
+    await act(async () => {
+      await userEvent.keyboard('{Enter}');
+    });
+
+    await waitFor(() => {
+      expect(document.activeElement.id).toBe('bookmark-button');
+    });
+
+    bookmarkButton.focus();
+
+    await act(async () => {
+      await userEvent.keyboard('{Space}');
+    });
+
+    await waitFor(() => {
+      expect(document.activeElement.id).toBe('bookmark-button');
+    });
+
+    jest.useRealTimers();
+  });
+
+  it('not focuses bookmark-button after pressing other keys', async () => {
+    jest.useFakeTimers();
+
+    render(
+      <>
+        <UnitButton {...mockData} />
+        <button id="bookmark-button" type="button">Bookmark</button>
+      </>,
+    );
+
+    jest.advanceTimersByTime(200);
+
+    await act(async () => {
+      await userEvent.keyboard('{A}');
+    });
+
+    await waitFor(() => {
+      expect(document.activeElement.id).not.toBe('bookmark-button');
+    });
   });
 });

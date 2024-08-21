@@ -41,6 +41,7 @@ const BookmarkButton = ({
 
   return (
     <StatefulButton
+      id="bookmark-button"
       variant="link"
       className="px-1 ml-n1 btn-sm text-primary-500"
       onClick={toggleBookmark}

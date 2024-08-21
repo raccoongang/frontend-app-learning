@@ -4,8 +4,10 @@ import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import MockAdapter from 'axios-mock-adapter';
 import { breakpoints } from '@edx/paragon';
+import { within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
-  act, fireEvent, getByRole, initializeTestStore, loadUnit, render, screen, waitFor,
+  act, fireEvent, initializeTestStore, loadUnit, render, screen, waitFor, getByRole,
 } from '../../setupTest';
 import { buildTopicsFromUnits } from '../data/__factories__/discussionTopics.factory';
 import { handleNextSectionCelebration } from './celebration';
@@ -378,7 +380,50 @@ describe('Course', () => {
     // We are in the middle of the sequence, so no
     expect(previousSequenceHandler).not.toHaveBeenCalled();
     expect(nextSequenceHandler).not.toHaveBeenCalled();
-    expect(unitNavigationHandler).toHaveBeenCalledTimes(4);
+    expect(unitNavigationHandler).toHaveBeenCalledTimes(2);
+  });
+
+  it('navigates through breadcrumb links and focuses on notification and active unit buttons using Tab key', async () => {
+    const courseMetadata = Factory.build('courseMetadata');
+    const unitBlocks = Array.from({ length: 3 }).map(() => Factory.build(
+      'block',
+      { type: 'vertical' },
+      { courseId: courseMetadata.id },
+    ));
+    const testStore = await initializeTestStore({ courseMetadata, unitBlocks }, false);
+    const { courseware, models } = testStore.getState();
+    const { courseId, sequenceId } = courseware;
+    const testData = {
+      ...mockData,
+      courseId,
+      sequenceId,
+      unitId: Object.values(models.units)[1].id, // Corner cases are already covered in `Sequence` tests.
+    };
+    render(<Course {...testData} />, { store: testStore });
+
+    loadUnit();
+
+    const breadcrumb = screen.getByRole('navigation', { name: 'breadcrumb' });
+    const listItems = within(breadcrumb).getAllByRole('listitem');
+    const links = listItems.map((li) => within(li).getByRole('link'));
+
+    links[0].focus();
+    expect(links[0]).toHaveFocus();
+
+    links.slice(1).forEach((link) => {
+      userEvent.tab();
+      expect(link).toHaveFocus();
+    });
+    expect(links[links.length - 1]).toHaveFocus();
+
+    userEvent.tab();
+    const notificationButton = screen.getByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
+    expect(notificationButton).toHaveFocus();
+
+    userEvent.tab();
+    const activeUnitButton = screen.getByRole('button', { class: 'active' });
+    activeUnitButton.focus();
+    expect(activeUnitButton).toHaveFocus();
   });
 
   describe('Sequence alerts display', () => {

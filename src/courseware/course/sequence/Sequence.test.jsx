@@ -74,10 +74,10 @@ describe('Sequence', () => {
     );
 
     await waitFor(() => expect(screen.queryByText('Loading locked content messaging...')).toBeInTheDocument());
-    // `Previous`, `Next`, `Prerequisite` and `Close Tray` buttons.
-    expect(screen.getAllByRole('button').length).toEqual(4);
-    // `Active` button.
-    expect(screen.getAllByRole('tab').length).toEqual(1);
+    // `Prerequisite` and `Close Tray` buttons.
+    expect(screen.getAllByRole('button').length).toEqual(2);
+    // `Active`, 'Prev', 'Next' button.
+    expect(screen.getAllByRole('tabpanel').length).toEqual(3);
 
     expect(screen.getByText('Content Locked')).toBeInTheDocument();
     const unitContainer = container.querySelector('.unit-container');
@@ -126,17 +126,18 @@ describe('Sequence', () => {
 
   it('handles loading unit', async () => {
     render(<Sequence {...mockData} />);
+    const previousAndNextButtonLength = 2;
     expect(await screen.findByText('Loading learning sequence...')).toBeInTheDocument();
     // Renders unit tabs.
-    expect(screen.getAllByRole('tab')).toHaveLength(unitBlocks.length);
+    expect(screen.getAllByRole('tabpanel')).toHaveLength(unitBlocks.length + previousAndNextButtonLength);
 
     // `Previous`, `Next`, `Prerequisite` and `Close Tray` buttons.
-    expect(screen.getAllByRole('button').length).toEqual(4);
+    expect(screen.getAllByRole('button').length).toEqual(2);
 
     loadUnit();
     await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).not.toBeInTheDocument());
-    // At this point there will be 2 `Previous` and 2 `Next` buttons.
-    expect(screen.getAllByRole('button', { name: /previous|next/i }).length).toEqual(4);
+    // At this point there will be `Previous` and `Next` buttons it tablist.
+    expect(screen.getAllByRole('tabpanel', { name: /previous|next/i }).length).toEqual(2);
   });
 
   describe('sequence and unit navigation buttons', () => {
@@ -168,7 +169,7 @@ describe('Sequence', () => {
       render(<Sequence {...testData} />, { store: testStore });
       expect(await screen.findByText('Loading learning sequence...')).toBeInTheDocument();
 
-      const sequencePreviousButton = screen.getByRole('button', { name: /previous/i });
+      const sequencePreviousButton = screen.getByRole('tabpanel', { name: /previous/i });
       fireEvent.click(sequencePreviousButton);
       expect(testData.previousSequenceHandler).toHaveBeenCalledTimes(1);
       expect(sendTrackEvent).toHaveBeenCalledTimes(1);
@@ -183,6 +184,7 @@ describe('Sequence', () => {
       await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).not.toBeInTheDocument());
       const unitPreviousButton = screen.getAllByRole('button', { name: /previous/i })
         .filter(button => button !== sequencePreviousButton)[0];
+      expect(unitPreviousButton).toBeInTheDocument();
       fireEvent.click(unitPreviousButton);
       expect(testData.previousSequenceHandler).toHaveBeenCalledTimes(2);
       expect(sendTrackEvent).toHaveBeenCalledTimes(2);
@@ -204,7 +206,7 @@ describe('Sequence', () => {
       render(<Sequence {...testData} />, { store: testStore });
       expect(await screen.findByText('Loading learning sequence...')).toBeInTheDocument();
 
-      const sequenceNextButton = screen.getByRole('button', { name: /next/i });
+      const sequenceNextButton = screen.getByRole('tabpanel', { name: /next/i });
       fireEvent.click(sequenceNextButton);
       expect(testData.nextSequenceHandler).toHaveBeenCalledTimes(1);
       expect(sendTrackEvent).toHaveBeenCalledWith('edx.ui.lms.sequence.next_selected', {
@@ -242,11 +244,11 @@ describe('Sequence', () => {
       render(<Sequence {...testData} />, { store: testStore });
       await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).toBeInTheDocument());
 
-      fireEvent.click(screen.getByRole('button', { name: /previous/i }));
+      fireEvent.click(screen.getByRole('tabpanel', { name: /previous/i }));
       expect(testData.previousSequenceHandler).not.toHaveBeenCalled();
       expect(testData.unitNavigationHandler).toHaveBeenCalledWith(unitBlocks[unitNumber - 1].id);
 
-      fireEvent.click(screen.getByRole('button', { name: /next/i }));
+      fireEvent.click(screen.getByRole('tabpanel', { name: /next/i }));
       expect(testData.nextSequenceHandler).not.toHaveBeenCalled();
       // As `previousSequenceHandler` and `nextSequenceHandler` are mocked, we aren't really changing the position here.
       // Therefore the next unit will still be `the initial one + 1`.
@@ -267,7 +269,7 @@ describe('Sequence', () => {
       loadUnit();
       await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).not.toBeInTheDocument());
 
-      screen.getAllByRole('button', { name: /previous/i }).forEach(button => fireEvent.click(button));
+      screen.getAllByRole('tabpanel', { name: /previous/i }).forEach(button => fireEvent.click(button));
 
       expect(testData.previousSequenceHandler).not.toHaveBeenCalled();
       expect(testData.unitNavigationHandler).not.toHaveBeenCalled();
@@ -286,7 +288,7 @@ describe('Sequence', () => {
       loadUnit();
       await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).not.toBeInTheDocument());
 
-      screen.getAllByRole('button', { name: /next/i }).forEach(button => fireEvent.click(button));
+      screen.getAllByRole('tabpanel', { name: /next/i }).forEach(button => fireEvent.click(button));
 
       expect(testData.nextSequenceHandler).not.toHaveBeenCalled();
       expect(testData.unitNavigationHandler).not.toHaveBeenCalled();
@@ -328,11 +330,16 @@ describe('Sequence', () => {
       loadUnit();
       await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).not.toBeInTheDocument());
 
-      screen.getAllByRole('button', { name: /previous/i }).forEach(button => fireEvent.click(button));
+      const unitPrevButton = screen.getByRole('tabpanel', { name: /previous/i });
+      const sequencePrevButton = screen.getByRole('button', { name: /previous/i });
+      const unitNextButton = screen.getByRole('tabpanel', { name: /next/i });
+      const sequenceNextButton = screen.getByRole('button', { name: /next/i });
+
+      [unitPrevButton, sequencePrevButton].forEach(button => fireEvent.click(button));
       expect(testData.previousSequenceHandler).toHaveBeenCalledTimes(2);
       expect(testData.unitNavigationHandler).not.toHaveBeenCalled();
 
-      screen.getAllByRole('button', { name: /next/i }).forEach(button => fireEvent.click(button));
+      [unitNextButton, sequenceNextButton].forEach(button => fireEvent.click(button));
       expect(testData.nextSequenceHandler).toHaveBeenCalledTimes(2);
       expect(testData.unitNavigationHandler).not.toHaveBeenCalled();
 

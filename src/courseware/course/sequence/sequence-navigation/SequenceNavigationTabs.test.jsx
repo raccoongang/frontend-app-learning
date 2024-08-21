@@ -1,10 +1,13 @@
 import React from 'react';
 import { Factory } from 'rosie';
 import { act, fireEvent, getAllByRole } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
-import { initializeTestStore, render, screen } from '../../../../setupTest';
-import SequenceNavigationTabs from './SequenceNavigationTabs';
+import {
+  initializeTestStore, render, screen, waitFor,
+} from '../../../../setupTest';
 import useIndexOfLastVisibleChild from '../../../../generic/tabs/useIndexOfLastVisibleChild';
+import SequenceNavigationTabs from './SequenceNavigationTabs';
 
 // Mock the hook to avoid relying on its implementation and mocking `getBoundingClientRect`.
 jest.mock('../../../../generic/tabs/useIndexOfLastVisibleChild');
@@ -43,7 +46,7 @@ describe('Sequence Navigation Tabs', () => {
     useIndexOfLastVisibleChild.mockReturnValue([0, null, null]);
     render(<SequenceNavigationTabs {...mockData} />);
 
-    expect(screen.getAllByRole('tab')).toHaveLength(unitBlocks.length);
+    expect(screen.getAllByRole('tabpanel')).toHaveLength(unitBlocks.length);
   });
 
   it('renders unit buttons and dropdown button', async () => {
@@ -60,10 +63,31 @@ describe('Sequence Navigation Tabs', () => {
       await fireEvent.click(dropdownToggle);
     });
     const dropdownMenu = container.querySelector('.dropdown');
-    const dropdownButtons = getAllByRole(dropdownMenu, 'tab');
+    const dropdownButtons = getAllByRole(dropdownMenu, 'tabpanel');
+
     expect(dropdownButtons).toHaveLength(unitBlocks.length);
     expect(getAllByRole(dropdownMenu, 'button')).toHaveLength(1);
     expect(screen.getByRole('button', { name: `${activeBlockNumber} of ${unitBlocks.length}` }))
       .toHaveClass('dropdown-toggle');
+  });
+
+  it('focuses buttons after pressing ArrowRight or ArrowLeft keys', async () => {
+    useIndexOfLastVisibleChild.mockReturnValue([0, null, null]);
+    render(<SequenceNavigationTabs {...mockData} />);
+
+    const firstUnitButton = screen.getAllByRole('tabpanel')[0];
+    firstUnitButton.focus();
+
+    await userEvent.keyboard('{ArrowRight}');
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(screen.getAllByRole('tabpanel')[1]);
+    });
+
+    await userEvent.keyboard('{ArrowLeft}');
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(screen.getAllByRole('tabpanel')[0]);
+    });
   });
 });
