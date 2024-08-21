@@ -76,8 +76,8 @@ describe('Sequence', () => {
     await waitFor(() => expect(screen.queryByText('Loading locked content messaging...')).toBeInTheDocument());
     // `Prerequisite` and `Close Tray` buttons.
     expect(screen.getAllByRole('button').length).toEqual(2);
-    // `Active` button.
-    expect(screen.getAllByRole('tabpanel').length).toEqual(1);
+    // `Active`, 'Prev', 'Next' button.
+    expect(screen.getAllByRole('tabpanel').length).toEqual(3);
 
     expect(screen.getByText('Content Locked')).toBeInTheDocument();
     const unitContainer = container.querySelector('.unit-container');
@@ -330,21 +330,38 @@ describe('Sequence', () => {
       loadUnit();
       await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).not.toBeInTheDocument());
 
-      screen.getAllByRole('button', { name: /previous/i }).forEach(button => fireEvent.click(button));
-      expect(testData.previousSequenceHandler).toHaveBeenCalledTimes(1);
+      const unitPrevButton = screen.getByRole('tabpanel', { name: /previous/i });
+      const sequencePrevButton = screen.getByRole('button', { name: /previous/i });
+      const unitNextButton = screen.getByRole('tabpanel', { name: /next/i });
+      const sequenceNextButton = screen.getByRole('button', { name: /next/i });
+
+      [unitPrevButton, sequencePrevButton].forEach(button => fireEvent.click(button));
+      expect(testData.previousSequenceHandler).toHaveBeenCalledTimes(2);
       expect(testData.unitNavigationHandler).not.toHaveBeenCalled();
 
-      screen.getAllByRole('button', { name: /next/i }).forEach(button => fireEvent.click(button));
-      expect(testData.nextSequenceHandler).toHaveBeenCalledTimes(1);
+      [unitNextButton, sequenceNextButton].forEach(button => fireEvent.click(button));
+      expect(testData.nextSequenceHandler).toHaveBeenCalledTimes(2);
       expect(testData.unitNavigationHandler).not.toHaveBeenCalled();
 
       expect(sendTrackEvent).toHaveBeenNthCalledWith(1, 'edx.ui.lms.sequence.previous_selected', {
         current_tab: 1,
         id: testData.unitId,
         tab_count: 0,
+        widget_placement: 'top',
+      });
+      expect(sendTrackEvent).toHaveBeenNthCalledWith(2, 'edx.ui.lms.sequence.previous_selected', {
+        current_tab: 1,
+        id: testData.unitId,
+        tab_count: 0,
         widget_placement: 'bottom',
       });
-      expect(sendTrackEvent).toHaveBeenNthCalledWith(2, 'edx.ui.lms.sequence.next_selected', {
+      expect(sendTrackEvent).toHaveBeenNthCalledWith(3, 'edx.ui.lms.sequence.next_selected', {
+        current_tab: 1,
+        id: testData.unitId,
+        tab_count: 0,
+        widget_placement: 'top',
+      });
+      expect(sendTrackEvent).toHaveBeenNthCalledWith(4, 'edx.ui.lms.sequence.next_selected', {
         current_tab: 1,
         id: testData.unitId,
         tab_count: 0,

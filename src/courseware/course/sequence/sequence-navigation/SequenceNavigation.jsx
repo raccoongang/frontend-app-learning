@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { breakpoints, Button, useWindowSize } from '@edx/paragon';
+import {
+  breakpoints, Button, useArrowKeyNavigation, useWindowSize,
+} from '@edx/paragon';
 import { ChevronLeft, ChevronRight } from '@edx/paragon/icons';
 import classNames from 'classnames';
 import {
@@ -43,6 +45,11 @@ const SequenceNavigation = ({
   const shouldDisplayNotificationTriggerInSequence = useWindowSize().width < breakpoints.small.minWidth;
 
   const prevArrow = isRtl(getLocale()) ? ChevronRight : ChevronLeft;
+
+  const parentRef = useArrowKeyNavigation({
+    selectors: 'button:not(:disabled)',
+    ignoredKeys: ['ArrowUp', 'ArrowDown'],
+  });
 
   // eslint-disable-next-line react/no-unstable-nested-components
   const PreviousButton = () => (
@@ -93,12 +100,20 @@ const SequenceNavigation = ({
   const renderUnitButtons = () => {
     if (isLocked) {
       return (
-        <UnitButton unitId={unitId} title="" contentType="lock" isActive onClick={() => {}} />
+        <React.Fragment ref={parentRef}>
+          <PreviousButton />
+          <UnitButton unitId={unitId} title="" contentType="lock" isActive onClick={() => {}} />
+          <NextButton />
+        </React.Fragment>
       );
     }
     if (sequence.unitIds.length === 0 || unitId === null) {
       return (
-        <div style={{ flexBasis: '100%', minWidth: 0, borderBottom: 'solid 1px #EAEAEA' }} />
+        <React.Fragment ref={parentRef}>
+          <PreviousButton />
+          <div style={{ flexBasis: '100%', minWidth: 0, borderBottom: 'solid 1px #EAEAEA' }} />
+          <NextButton />
+        </React.Fragment>
       );
     }
     return (
