@@ -20,6 +20,7 @@ logs
 
 # Local package dependencies
 module.config.js
+webpack.dev-tutor.config.js
 
 # Local environment overrides
 .env.private

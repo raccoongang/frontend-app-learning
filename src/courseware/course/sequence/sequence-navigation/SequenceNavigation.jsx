@@ -44,7 +44,8 @@ const SequenceNavigation = ({
 
   const prevArrow = isRtl(getLocale()) ? ChevronRight : ChevronLeft;
 
-  const previousButton = () => (
+  // eslint-disable-next-line react/no-unstable-nested-components
+  const PreviousButton = () => (
     <Button
       variant="link"
       className="previous-btn"
@@ -62,7 +63,8 @@ const SequenceNavigation = ({
     </Button>
   );
 
-  const nextButton = () => {
+  // eslint-disable-next-line react/no-unstable-nested-components
+  const NextButton = () => {
     const { exitActive, exitText } = GetCourseExitNavigation(courseId, intl);
     const buttonOnClick = isLastUnit ? goToCourseExitPage : nextSequenceHandler;
     const buttonText = (isLastUnit && exitText) ? exitText : intl.formatMessage(messages.nextButton);
@@ -105,8 +107,8 @@ const SequenceNavigation = ({
         unitId={unitId}
         showCompletion={sequence.showCompletion}
         onNavigate={onNavigate}
-        previousButton={previousButton()}
-        nextButton={nextButton()}
+        previousButton={<PreviousButton />}
+        nextButton={<NextButton />}
       />
     );
   };

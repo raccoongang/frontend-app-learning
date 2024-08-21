@@ -73,12 +73,13 @@ describe('Sequence Navigation', () => {
 
   it('renders correctly and handles unit button clicks', () => {
     const onNavigate = jest.fn();
+    const previousAndNextButtonsLength = 2;
     render(<SequenceNavigation {...mockData} {...{ onNavigate }} />);
 
     const unitButtons = screen.getAllByRole('tabpanel');
     expect(unitButtons).toHaveLength(unitButtons.length);
     unitButtons.forEach(button => fireEvent.click(button));
-    expect(onNavigate).toHaveBeenCalledTimes(unitButtons.length - 2);
+    expect(onNavigate).toHaveBeenCalledTimes(unitButtons.length - previousAndNextButtonsLength);
   });
 
   it('has both navigation buttons enabled for a non-corner unit of the sequence', () => {

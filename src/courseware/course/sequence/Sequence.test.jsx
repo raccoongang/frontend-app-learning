@@ -74,7 +74,7 @@ describe('Sequence', () => {
     );
 
     await waitFor(() => expect(screen.queryByText('Loading locked content messaging...')).toBeInTheDocument());
-    // `Previous`, `Next`, `Prerequisite` and `Close Tray` buttons.
+    // `Prerequisite` and `Close Tray` buttons.
     expect(screen.getAllByRole('button').length).toEqual(2);
     // `Active` button.
     expect(screen.getAllByRole('tabpanel').length).toEqual(1);
@@ -126,16 +126,17 @@ describe('Sequence', () => {
 
   it('handles loading unit', async () => {
     render(<Sequence {...mockData} />);
+    const previousAndNextButtonLength = 2;
     expect(await screen.findByText('Loading learning sequence...')).toBeInTheDocument();
     // Renders unit tabs.
-    expect(screen.getAllByRole('tabpanel')).toHaveLength(unitBlocks.length + 2);
+    expect(screen.getAllByRole('tabpanel')).toHaveLength(unitBlocks.length + previousAndNextButtonLength);
 
     // `Previous`, `Next`, `Prerequisite` and `Close Tray` buttons.
     expect(screen.getAllByRole('button').length).toEqual(2);
 
     loadUnit();
     await waitFor(() => expect(screen.queryByText('Loading learning sequence...')).not.toBeInTheDocument());
-    // At this point there will be 2 `Previous` and 2 `Next` buttons.
+    // At this point there will be `Previous` and `Next` buttons it tablist.
     expect(screen.getAllByRole('tabpanel', { name: /previous|next/i }).length).toEqual(2);
   });
 
@@ -294,7 +295,7 @@ describe('Sequence', () => {
       expect(sendTrackEvent).not.toHaveBeenCalled();
     });
 
-    it.skip('handles the navigation buttons for empty sequence', async () => {
+    it('handles the navigation buttons for empty sequence', async () => {
       const testSequenceBlocks = [Factory.build(
         'block',
         { type: 'sequential', children: unitBlocks.map(block => block.id) },
@@ -341,21 +342,9 @@ describe('Sequence', () => {
         current_tab: 1,
         id: testData.unitId,
         tab_count: 0,
-        widget_placement: 'top',
-      });
-      expect(sendTrackEvent).toHaveBeenNthCalledWith(2, 'edx.ui.lms.sequence.previous_selected', {
-        current_tab: 1,
-        id: testData.unitId,
-        tab_count: 0,
         widget_placement: 'bottom',
       });
-      expect(sendTrackEvent).toHaveBeenNthCalledWith(3, 'edx.ui.lms.sequence.next_selected', {
-        current_tab: 1,
-        id: testData.unitId,
-        tab_count: 0,
-        widget_placement: 'top',
-      });
-      expect(sendTrackEvent).toHaveBeenNthCalledWith(4, 'edx.ui.lms.sequence.next_selected', {
+      expect(sendTrackEvent).toHaveBeenNthCalledWith(2, 'edx.ui.lms.sequence.next_selected', {
         current_tab: 1,
         id: testData.unitId,
         tab_count: 0,

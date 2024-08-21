@@ -78,17 +78,13 @@ describe('Sequence Navigation Tabs', () => {
     const firstUnitButton = screen.getAllByRole('tabpanel')[0];
     firstUnitButton.focus();
 
-    await act(async () => {
-      await userEvent.keyboard('{ArrowRight}');
-    });
+    await userEvent.keyboard('{ArrowRight}');
 
     await waitFor(() => {
       expect(document.activeElement).toBe(screen.getAllByRole('tabpanel')[1]);
     });
 
-    await act(async () => {
-      await userEvent.keyboard('{ArrowLeft}');
-    });
+    await userEvent.keyboard('{ArrowLeft}');
 
     await waitFor(() => {
       expect(document.activeElement).toBe(screen.getAllByRole('tabpanel')[0]);

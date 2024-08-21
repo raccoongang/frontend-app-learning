@@ -383,7 +383,7 @@ describe('Course', () => {
     expect(unitNavigationHandler).toHaveBeenCalledTimes(2);
   });
 
-  it('check tab navigations', async () => {
+  it('navigates through breadcrumb links and focuses on notification and active unit buttons using Tab key', async () => {
     const courseMetadata = Factory.build('courseMetadata');
     const unitBlocks = Array.from({ length: 3 }).map(() => Factory.build(
       'block',
@@ -417,7 +417,7 @@ describe('Course', () => {
     expect(links[links.length - 1]).toHaveFocus();
 
     userEvent.tab();
-    const notificationButton = screen.getByRole('button', { name: 'Show notification tray' });
+    const notificationButton = screen.getByRole('button', { name: /Show discussions tray/i });
     expect(notificationButton).toHaveFocus();
 
     userEvent.tab();
