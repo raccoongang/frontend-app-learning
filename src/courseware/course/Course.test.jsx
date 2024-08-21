@@ -13,6 +13,7 @@ import * as celebrationUtils from './celebration/utils';
 import Course from './Course';
 import { executeThunk } from '../../utils';
 import * as thunks from '../data/thunks';
+import messages from './messages';
 
 jest.mock('@edx/frontend-platform/analytics');
 
@@ -134,29 +135,128 @@ describe('Course', () => {
     localStorage.setItem('showDiscussionSidebar', false);
     render(<Course {...mockData} />);
 
-    const notificationTrigger = screen.getByRole('button', { name: /Show notification tray/i });
+    const notificationTrigger = screen.getByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     expect(notificationTrigger).toBeInTheDocument();
     expect(notificationTrigger.parentNode).toHaveClass('border-primary-700');
     fireEvent.click(notificationTrigger);
     expect(notificationTrigger.parentNode).not.toHaveClass('border-primary-700');
   });
 
-  it('handles click to open/close notification tray', async () => {
+  it('handles toggling the notification tray and manages focus correctly', async () => {
+    const sectionId = 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@bcdabcdabcdabcdabcdabcdabcdabcd3';
     sessionStorage.clear();
     localStorage.setItem('showDiscussionSidebar', false);
     render(<Course {...mockData} />);
+
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
-    const notificationShowButton = await screen.findByRole('button', { name: /Show notification tray/i });
+    expect(sessionStorage.getItem(`notificationTrayFocus.${mockData.courseId}`)).toBe('"false"');
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     expect(screen.queryByRole('region', { name: /notification tray/i })).not.toHaveClass('d-none');
+    expect(notificationShowButton).toHaveAttribute('aria-expanded', 'true');
+    expect(notificationShowButton).toHaveAttribute('aria-controls', sectionId);
+    const notificationTrayCloseBtn = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
+    expect(notificationTrayCloseBtn).not.toHaveFocus();
+
+    fireEvent.click(notificationShowButton);
+
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
+    expect(sessionStorage.getItem(`notificationTrayFocus.${mockData.courseId}`)).toBe('"false"');
+    expect(notificationShowButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('region', { name: /notification tray/i })).toHaveClass('d-none');
+    expect(notificationTrayCloseBtn).not.toHaveFocus();
+
+    fireEvent.click(notificationShowButton);
+    expect(notificationTrayCloseBtn).toHaveFocus();
+    expect(sessionStorage.getItem(`notificationTrayFocus.${mockData.courseId}`)).toBe('"true"');
+    expect(notificationShowButton).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('should close the notification tray and move focus to the show button after clicking the show button', async () => {
+    sessionStorage.clear();
+    localStorage.setItem('showDiscussionSidebar', false);
+    render(<Course {...mockData} />);
+
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
+
+    const notificationTrayCloseBtn = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
+    fireEvent.click(notificationTrayCloseBtn);
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
+    fireEvent.click(notificationShowButton);
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
+    expect(notificationTrayCloseBtn).toHaveFocus();
     fireEvent.click(notificationShowButton);
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
-    expect(screen.queryByRole('region', { name: /notification tray/i })).toHaveClass('d-none');
+
+    await waitFor(() => {
+      expect(notificationShowButton).toHaveFocus();
+    });
+  });
+
+  it('should navigate focus between the notification tray close and show buttons using Shift+Tab and Tab', async () => {
+    sessionStorage.clear();
+    localStorage.setItem('showDiscussionSidebar', false);
+    render(<Course {...mockData} />);
+
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
+
+    const notificationTrayCloseBtn = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
+    fireEvent.click(notificationTrayCloseBtn);
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
+    fireEvent.click(notificationShowButton);
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
+    expect(notificationTrayCloseBtn).toHaveFocus();
+    fireEvent.keyDown(document.activeElement, {
+      key: 'Tab',
+      code: 'Tab',
+      keyCode: 9,
+      charCode: 9,
+      shiftKey: true,
+    });
+
+    await waitFor(() => {
+      expect(notificationShowButton).toHaveFocus();
+    });
+
+    fireEvent.keyDown(document.activeElement, {
+      key: 'Tab',
+      code: 'Tab',
+      keyCode: 9,
+      charCode: 9,
+    });
+
+    await waitFor(() => {
+      expect(notificationTrayCloseBtn).toHaveFocus();
+    });
+  });
+
+  it('should close the notification tray and move focus to the show button after pressing Enter', async () => {
+    sessionStorage.clear();
+    localStorage.setItem('showDiscussionSidebar', false);
+    render(<Course {...mockData} />);
+
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
+
+    const notificationTrayCloseBtn = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
+    fireEvent.click(notificationTrayCloseBtn);
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
+    fireEvent.click(notificationShowButton);
+    expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
+    expect(notificationTrayCloseBtn).toHaveFocus();
+    fireEvent.keyDown(notificationTrayCloseBtn, {
+      key: 'Enter', code: 'Enter', keyCode: 13, charCode: 13,
+    });
+    await waitFor(() => {
+      expect(notificationShowButton).toHaveFocus();
+    });
   });
 
   it('handles reload persisting notification tray status', async () => {
     sessionStorage.clear();
     render(<Course {...mockData} />);
-    const notificationShowButton = await screen.findByRole('button', { name: /Show notification tray/i });
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     fireEvent.click(notificationShowButton);
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"closed"');
 
@@ -182,7 +282,7 @@ describe('Course', () => {
 
     render(<Course {...mockData} />);
     expect(sessionStorage.getItem(`notificationTrayStatus.${mockData.courseId}`)).toBe('"open"');
-    const notificationShowButton = await screen.findByRole('button', { name: /Show notification tray/i });
+    const notificationShowButton = await screen.findByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     fireEvent.click(notificationShowButton);
 
     // Verify sessionStorage was updated for the original course

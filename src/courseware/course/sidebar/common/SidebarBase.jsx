@@ -3,10 +3,13 @@ import { Icon, IconButton } from '@edx/paragon';
 import { ArrowBackIos, Close } from '@edx/paragon/icons';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useContext } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useRef,
+} from 'react';
 import { useEventListener } from '../../../../generic/hooks';
 import messages from '../../messages';
 import SidebarContext from '../SidebarContext';
+import { setSessionStorage, getSessionStorage } from '../../../../data/sessionStorage';
 
 const SidebarBase = ({
   intl,
@@ -19,20 +22,98 @@ const SidebarBase = ({
   width,
 }) => {
   const {
+    courseId,
     toggleSidebar,
     shouldDisplayFullScreen,
     currentSidebar,
   } = useContext(SidebarContext);
+  const closeBtnRef = useRef(null);
+  const responsiveCloseNotificationTrayRef = useRef(null);
+  const isOpenNotificationTray = getSessionStorage(`notificationTrayStatus.${courseId}`) === 'open';
+  const isFocusedNotificationTray = getSessionStorage(`notificationTrayFocus.${courseId}`) === 'true';
+
+  useEffect(() => {
+    if (isOpenNotificationTray && isFocusedNotificationTray && closeBtnRef.current) {
+      closeBtnRef.current.focus();
+    }
+
+    if (shouldDisplayFullScreen) {
+      responsiveCloseNotificationTrayRef.current?.focus();
+    }
+  });
 
   const receiveMessage = useCallback(({ data }) => {
     const { type } = data;
     if (type === 'learning.events.sidebar.close') {
       toggleSidebar(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sidebarId, toggleSidebar]);
+  }, [toggleSidebar]);
 
   useEventListener('message', receiveMessage);
+
+  const focusSidebarTriggerBtn = () => {
+    const performFocus = () => {
+      const sidebarTriggerBtn = document.querySelector('.sidebar-trigger-btn');
+      if (sidebarTriggerBtn) {
+        sidebarTriggerBtn.focus();
+      }
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(performFocus);
+    });
+  };
+
+  const handleCloseNotificationTray = () => {
+    toggleSidebar(null);
+    setSessionStorage(`notificationTrayFocus.${courseId}`, 'true');
+    setSessionStorage(`notificationTrayStatus.${courseId}`, 'closed');
+    focusSidebarTriggerBtn();
+  };
+
+  const handleKeyDown = useCallback((event) => {
+    const { key, shiftKey, target } = event;
+
+    // Shift + Tab
+    if (shiftKey && key === 'Tab' && target === closeBtnRef.current) {
+      event.preventDefault();
+      focusSidebarTriggerBtn();
+    }
+  }, [focusSidebarTriggerBtn, closeBtnRef]);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  const handleKeyDownNotificationTray = (event) => {
+    const { key, shiftKey } = event;
+    const currentElement = event.target === responsiveCloseNotificationTrayRef.current;
+    const sidebarTriggerBtn = document.querySelector('.call-to-action-btn');
+
+    switch (key) {
+      case 'Enter':
+        if (currentElement) {
+          handleCloseNotificationTray();
+        }
+        break;
+
+      case 'Tab':
+        if (!shiftKey && sidebarTriggerBtn) {
+          event.preventDefault();
+          sidebarTriggerBtn.focus();
+        } else if (shiftKey) {
+          event.preventDefault();
+          responsiveCloseNotificationTrayRef.current?.focus();
+        }
+        break;
+
+      default:
+        break;
+    }
+  };
 
   return (
     <section
@@ -48,9 +129,10 @@ const SidebarBase = ({
       {shouldDisplayFullScreen ? (
         <div
           className="pt-2 pb-2.5 border-bottom border-light-400 d-flex align-items-center ml-2"
-          onClick={() => toggleSidebar(null)}
-          onKeyDown={() => toggleSidebar(null)}
+          onClick={handleCloseNotificationTray}
+          onKeyDown={handleKeyDownNotificationTray}
           role="button"
+          ref={responsiveCloseNotificationTrayRef}
           tabIndex="0"
           alt={intl.formatMessage(messages.responsiveCloseNotificationTray)}
         >
@@ -63,17 +145,18 @@ const SidebarBase = ({
       {showTitleBar && (
         <>
           <div className="d-flex align-items-center">
-            <span className="p-2.5 d-inline-block">{title}</span>
+            <h2 className="sidebar-base-title p-2.5 d-inline-block m-0 text-gray-700">{title}</h2>
             {shouldDisplayFullScreen
               ? null
               : (
                 <div className="d-inline-flex mr-2 mt-1.5 ml-auto">
                   <IconButton
+                    className="sidebar-close-btn"
                     src={Close}
                     size="sm"
+                    ref={closeBtnRef}
                     iconAs={Icon}
-                    onClick={() => toggleSidebar(null)}
-                    variant="primary"
+                    onClick={handleCloseNotificationTray}
                     alt={intl.formatMessage(messages.closeNotificationTrigger)}
                   />
                 </div>

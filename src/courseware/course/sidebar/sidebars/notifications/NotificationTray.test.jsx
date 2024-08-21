@@ -16,6 +16,7 @@ import { fetchCourse } from '../../../../data';
 import SidebarContext from '../../SidebarContext';
 import { ID } from './index';
 import NotificationTray from './NotificationTray';
+import messages from '../../../messages';
 
 initializeMockApp();
 jest.mock('@edx/frontend-platform/analytics');
@@ -66,7 +67,7 @@ describe('NotificationTray', () => {
     );
     expect(screen.getByText('Notifications'))
       .toBeInTheDocument();
-    const notificationCloseIconButton = screen.getByRole('button', { name: /Close notification tray/i });
+    const notificationCloseIconButton = screen.getByRole('button', { name: messages.closeNotificationTrigger.defaultMessage });
     expect(notificationCloseIconButton)
       .toBeInTheDocument();
     expect(notificationCloseIconButton)

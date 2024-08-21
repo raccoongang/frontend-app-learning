@@ -6,6 +6,7 @@ import {
 } from '../../../../../setupTest';
 import SidebarContext from '../../SidebarContext';
 import NotificationTrigger from './NotificationTrigger';
+import messages from '../../../messages';
 
 describe('Notification Trigger', () => {
   let mockData;
@@ -62,7 +63,7 @@ describe('Notification Trigger', () => {
     };
     renderWithProvider(testData, toggleNotificationTray);
 
-    const notificationTrigger = screen.getByRole('button', { name: /Show notification tray/i });
+    const notificationTrigger = screen.getByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     expect(notificationTrigger).toBeInTheDocument();
     fireEvent.click(notificationTrigger);
     expect(toggleNotificationTray).toHaveBeenCalledTimes(1);

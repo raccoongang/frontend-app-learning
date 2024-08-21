@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { sendTrackEvent, sendTrackingLogEvent } from '@edx/frontend-platform/analytics';
@@ -283,12 +283,14 @@ const UpgradeNotification = ({
   upsellPageName,
   userTimezone,
   verifiedMode,
+  currentSidebar,
 }) => {
   const dateNow = Date.now();
   const timezoneFormatArgs = userTimezone ? { timeZone: userTimezone } : {};
   const correctedTime = new Date(dateNow + timeOffsetMillis);
   const accessExpirationDate = accessExpiration ? new Date(accessExpiration.expirationDate) : null;
   const pastExpirationDeadline = accessExpiration ? new Date(dateNow) > accessExpirationDate : false;
+  const upgradeBtnRef = useRef(null);
 
   const eventProperties = {
     org_key: org,
@@ -308,6 +310,12 @@ const UpgradeNotification = ({
     sendTrackEvent('Promotion Viewed', promotionEventProperties);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (currentSidebar === 'NOTIFICATIONS' && upgradeBtnRef.current) {
+      upgradeBtnRef.current.focus();
+    }
+  }, [currentSidebar, upgradeBtnRef]);
 
   if (!verifiedMode) {
     return null;
@@ -447,10 +455,11 @@ const UpgradeNotification = ({
   if (pastExpirationDeadline) {
     callToActionButton = (
       <Button
-        variant="primary"
+        className="call-to-action-btn"
         onClick={logClickPastExpiration}
         href={marketingUrl}
         block
+        ref={upgradeBtnRef}
       >
         View Course Details
       </Button>
@@ -458,6 +467,7 @@ const UpgradeNotification = ({
   } else {
     callToActionButton = (
       <UpgradeButton
+        className="call-to-action-btn"
         offer={offer}
         onClick={logClick}
         verifiedMode={verifiedMode}
@@ -522,6 +532,7 @@ UpgradeNotification.propTypes = {
     price: PropTypes.number.isRequired,
     upgradeUrl: PropTypes.string.isRequired,
   }),
+  currentSidebar: PropTypes.string.isRequired,
 };
 
 UpgradeNotification.defaultProps = {

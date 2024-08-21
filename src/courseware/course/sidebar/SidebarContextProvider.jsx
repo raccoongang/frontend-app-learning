@@ -13,6 +13,7 @@ import { SIDEBARS } from './sidebars';
 const SidebarProvider = ({
   courseId,
   unitId,
+  sectionId,
   children,
 }) => {
   const { verifiedMode } = useModel('courseHomeMeta', courseId);
@@ -69,8 +70,9 @@ const SidebarProvider = ({
     shouldDisplayFullScreen,
     courseId,
     unitId,
+    sectionId,
   }), [courseId, currentSidebar, notificationStatus, onNotificationSeen, shouldDisplayFullScreen,
-    shouldDisplaySidebarOpen, toggleSidebar, unitId, upgradeNotificationCurrentState]);
+    shouldDisplaySidebarOpen, toggleSidebar, unitId, upgradeNotificationCurrentState, sectionId]);
 
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -82,6 +84,7 @@ const SidebarProvider = ({
 SidebarProvider.propTypes = {
   courseId: PropTypes.string.isRequired,
   unitId: PropTypes.string.isRequired,
+  sectionId: PropTypes.string.isRequired,
   children: PropTypes.node,
 };
 
