@@ -236,7 +236,7 @@ const CertificateStatus = ({ intl }) => {
   return (
     <section data-testid="certificate-status-component" className="text-dark-700 mb-4">
       <Card className="bg-light-200 raised-card">
-        <Card.Header title={header} />
+        <Card.Header title={<h2>{header}</h2>} />
         <Card.Section className="small text-gray-700">
           {body}
         </Card.Section>
