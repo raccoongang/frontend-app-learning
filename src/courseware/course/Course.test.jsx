@@ -417,7 +417,7 @@ describe('Course', () => {
     expect(links[links.length - 1]).toHaveFocus();
 
     userEvent.tab();
-    const notificationButton = screen.getByRole('button', { name: /Show discussions tray/i });
+    const notificationButton = screen.getByRole('button', { name: messages.openNotificationTrigger.defaultMessage });
     expect(notificationButton).toHaveFocus();
 
     userEvent.tab();
