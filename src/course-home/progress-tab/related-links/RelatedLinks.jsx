@@ -37,7 +37,7 @@ const RelatedLinks = ({ intl }) => {
 
   return (
     <section className="mb-4 x-small related-links">
-      <h3 className={classNames('h4', { 'related-links-title': wideScreen })}>
+      <h3 className="h4">
         {intl.formatMessage(messages.relatedLinks)}
       </h3>
       <ul className="pl-4 related-links-list">

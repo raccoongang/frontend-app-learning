@@ -37,9 +37,7 @@ const GradeSummaryHeader = ({ intl, allOfSomeAssignmentTypeIsLocked }) => {
         show={showTooltip}
         overlay={(
           <Popover>
-            <Popover.Content
-              className={classNames('text-dark-700', { small: !wideScreen })}
-            >
+            <Popover.Content className={classNames('text-dark-700', { small: !wideScreen })}>
               {intl.formatMessage(messages.gradeSummaryTooltipBody)}
             </Popover.Content>
           </Popover>
