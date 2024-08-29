@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
@@ -6,7 +7,9 @@ import {
   FormattedDate, FormattedMessage, injectIntl, intlShape,
 } from '@edx/frontend-platform/i18n';
 
-import { Button, Card } from '@edx/paragon';
+import {
+  Button, Card, breakpoints, useWindowSize,
+} from '@edx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 import { useModel } from '../../../generic/model-store';
 import { COURSE_EXIT_MODES, getCourseExitMode } from '../../../courseware/course/course-exit/utils';
@@ -25,6 +28,8 @@ const CertificateStatus = ({ intl }) => {
     canViewCertificate,
     userTimezone,
   } = useModel('courseHomeMeta', courseId);
+
+  const wideScreen = useWindowSize().width >= breakpoints.medium.minWidth;
 
   const {
     certificateData,
@@ -237,7 +242,7 @@ const CertificateStatus = ({ intl }) => {
     <section data-testid="certificate-status-component" className="text-dark-700 mb-4">
       <Card className="bg-light-200 raised-card">
         <Card.Header title={<h2>{header}</h2>} />
-        <Card.Section className="small text-gray-700">
+        <Card.Section className={classNames('text-gray-700', { small: !wideScreen })}>
           {body}
         </Card.Section>
         <Card.Footer>

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Icon, IconButton, OverlayTrigger, Popover,
+  Icon, IconButton, OverlayTrigger, Popover, breakpoints, useWindowSize,
 } from '@edx/paragon';
 import { Blocked, InfoOutline } from '@edx/paragon/icons';
 
@@ -19,6 +20,7 @@ const GradeSummaryHeader = ({ intl, allOfSomeAssignmentTypeIsLocked }) => {
     gradesFeatureIsFullyLocked,
   } = useModel('progress', courseId);
   const [showTooltip, setShowTooltip] = useState(false);
+  const wideScreen = useWindowSize().width >= breakpoints.medium.minWidth;
 
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
@@ -35,7 +37,9 @@ const GradeSummaryHeader = ({ intl, allOfSomeAssignmentTypeIsLocked }) => {
         show={showTooltip}
         overlay={(
           <Popover>
-            <Popover.Content className="small text-dark-700">
+            <Popover.Content
+              className={classNames('text-dark-700', { small: !wideScreen })}
+            >
               {intl.formatMessage(messages.gradeSummaryTooltipBody)}
             </Popover.Content>
           </Popover>

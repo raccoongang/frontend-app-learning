@@ -1,6 +1,8 @@
 import React from 'react';
+import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { breakpoints, useWindowSize } from '@edx/paragon';
 
 import { useModel } from '../../../../generic/model-store';
 
@@ -15,6 +17,8 @@ const CourseGrade = ({ intl }) => {
   const {
     courseId,
   } = useSelector(state => state.courseHome);
+
+  const wideScreen = useWindowSize().width >= breakpoints.medium.minWidth;
 
   const {
     creditCourseRequirements,
@@ -39,7 +43,7 @@ const CourseGrade = ({ intl }) => {
               ? intl.formatMessage(messages.gradesAndCredit)
               : intl.formatMessage(messages.grades)}
             </h2>
-            <p className="small">
+            <p className={classNames({ small: !wideScreen })}>
               {intl.formatMessage(messages.courseGradeBody)}
             </p>
           </div>
