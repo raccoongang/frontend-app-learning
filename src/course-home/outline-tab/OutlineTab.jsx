@@ -129,7 +129,7 @@ const OutlineTab = ({ intl }) => {
         </div>
       </div>
       <div className="row course-outline-tab">
-        <AccountActivationAlert />
+        <AccountActivationAlert />123
         <div className="col-12">
           <AlertList
             topic="outline-private-alerts"
@@ -185,7 +185,7 @@ const OutlineTab = ({ intl }) => {
             <ProctoringInfoPanel />
             { /** Defer showing the goal widget until the ProctoringInfoPanel has resolved or has been determined as
              disabled to avoid components bouncing around too much as screen is rendered */ }
-            {(!enableProctoredExams || proctoringPanelStatus === 'loaded') && weeklyLearningGoalEnabled && (
+            {true && (
               <WeeklyLearningGoalCard
                 daysPerWeek={selectedGoal && 'daysPerWeek' in selectedGoal ? selectedGoal.daysPerWeek : null}
                 subscribedToReminders={selectedGoal && 'subscribedToReminders' in selectedGoal ? selectedGoal.subscribedToReminders : false}

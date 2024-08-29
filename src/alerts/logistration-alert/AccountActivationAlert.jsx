@@ -120,7 +120,7 @@ const AccountActivationAlert = ({
       footerNode={button}
       onClose={() => ({})}
     >
-      {children()}
+      {children()}123
     </AlertModal>
   );
 };

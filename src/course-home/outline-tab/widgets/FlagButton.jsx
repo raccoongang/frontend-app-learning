@@ -23,10 +23,10 @@ const FlagButton = ({
     <div className="row w-100 m-0 justify-content-center pb-1">
       {buttonIcon}
     </div>
-    <div className={classnames('row w-100 m-0 justify-content-center small text-gray-700 pb-1', isSelected ? 'font-weight-bold' : '')}>
+    <div className={classnames('row w-100 m-0 justify-content-center text-gray-700 pb-1', isSelected ? 'font-weight-bold' : '')}>
       {title}
     </div>
-    <div className={classnames('row w-100 m-0 justify-content-center micro text-gray-500', isSelected ? 'font-weight-bold' : '')}>
+    <div className={classnames('row w-100 m-0 justify-content-center small text-gray-500', isSelected ? 'font-weight-bold' : '')}>
       {text}
     </div>
   </button>

@@ -94,11 +94,10 @@ const WeeklyLearningGoalCard = ({
       data-testid="weekly-learning-goal-card"
     >
       <Card.Header
-        size="sm"
         title={(<div id="set-weekly-goal-header">{intl.formatMessage(messages.setWeeklyGoal)}</div>)}
         subtitle={intl.formatMessage(messages.setWeeklyGoalDetail)}
       />
-      <Card.Section className="text-gray-700 small">
+      <Card.Section className="text-gray-700">
         <div
           role="radiogroup"
           aria-labelledby="set-weekly-goal-header"
@@ -126,13 +125,13 @@ const WeeklyLearningGoalCard = ({
             onChange={(event) => handleSubscribeToReminders(event)}
             disabled={!daysPerWeekGoal}
           >
-            <small>{intl.formatMessage(messages.setGoalReminder)}</small>
+            {intl.formatMessage(messages.setGoalReminder)}
           </Form.Switch>
         </div>
       </Card.Section>
       {isGetReminderSelected && (
         <Card.Section muted>
-          <div className="row w-100 m-0 small align-center">
+          <div className="row w-100 m-0 align-center">
             <div className="d-flex align-items-center pr-1">
               <Icon
                 className="text-primary-500"
