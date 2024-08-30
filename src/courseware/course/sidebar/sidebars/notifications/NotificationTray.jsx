@@ -45,20 +45,20 @@ const NotificationTray = ({ intl }) => {
       sidebarId={ID}
       className={classNames({ 'h-100': !verifiedMode && !shouldDisplayFullScreen })}
     >
-      <div>{true
+      <div>{verifiedMode
         ? (
           <UpgradeNotification
-            offer="123"
-            verifiedMode="staff"
-            accessExpiration="staff"
-            contentTypeGatingEnabled
-            marketingUrl="staff"
+            offer={offer}
+            verifiedMode={verifiedMode}
+            accessExpiration={accessExpiration}
+            contentTypeGatingEnabled={contentTypeGatingEnabled}
+            marketingUrl={marketingUrl}
             upsellPageName="in_course"
-            userTimezone="staff"
+            userTimezone={userTimezone}
             shouldDisplayBorder={false}
-            timeOffsetMillis="staff"
-            courseId="staff"
-            org="staff"
+            timeOffsetMillis={timeOffsetMillis}
+            courseId={courseId}
+            org={org}
             upgradeNotificationCurrentState={upgradeNotificationCurrentState}
             setupgradeNotificationCurrentState={setUpgradeNotificationCurrentState}
             currentSidebar={currentSidebar}

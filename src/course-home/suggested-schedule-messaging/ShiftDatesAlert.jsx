@@ -35,9 +35,9 @@ const ShiftDatesAlert = ({ fetch, intl, model }) => {
 
   const dispatch = useDispatch();
 
-  // if (!missedDeadlines || missedGatedContent || hasEnded) {
-  //   return null;
-  // }
+  if (!missedDeadlines || missedGatedContent || hasEnded) {
+    return null;
+  }
 
   return (
     <Alert variant="warning">

@@ -34,9 +34,9 @@ const UpgradeToShiftDatesAlert = ({ intl, logUpgradeLinkClick, model }) => {
     verifiedUpgradeLink,
   } = datesBannerInfo;
 
-  // if (!(contentTypeGatingEnabled && missedDeadlines && missedGatedContent && verifiedUpgradeLink) || hasEnded) {
-  //   return null;
-  // }
+  if (!(contentTypeGatingEnabled && missedDeadlines && missedGatedContent && verifiedUpgradeLink) || hasEnded) {
+    return null;
+  }
 
   return (
     <Alert className="bg-light-200">

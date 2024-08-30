@@ -32,9 +32,9 @@ const UpgradeToCompleteAlert = ({ intl, logUpgradeLinkClick }) => {
     verifiedUpgradeLink,
   } = datesBannerInfo;
 
-  // if (!contentTypeGatingEnabled || missedDeadlines || hasEnded || !verifiedUpgradeLink) {
-  //   return null;
-  // }
+  if (!contentTypeGatingEnabled || missedDeadlines || hasEnded || !verifiedUpgradeLink) {
+    return null;
+  }
 
   return (
     <Alert className="bg-light-200">
