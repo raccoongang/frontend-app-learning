@@ -372,9 +372,11 @@
 @import "course-home/dates-tab/timeline/Day.scss";
 @import "course-home/outline-tab/Section.scss";
 @import "generic/upgrade-notification/UpgradeNotification.scss";
+@import "generic/user-messages/Alert.scss";
 @import "generic/upsell-bullets/UpsellBullets.scss";
 @import "course-home/outline-tab/widgets/ProctoringInfoPanel.scss";
-@import "src/course-home/outline-tab/widgets/FlagButton.scss";
+@import "course-home/outline-tab/widgets/FlagButton.scss";
+@import "course-home/suggested-schedule-messaging/SuggestedScheduleMessaging.scss";
 @import "course-home/progress-tab";
 @import "courseware/course/course-exit/CourseRecommendations";
 @import "product-tours/newUserCourseHomeTour/NewUserCourseHomeTourModal.scss";

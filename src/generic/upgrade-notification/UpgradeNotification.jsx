@@ -491,9 +491,9 @@ const UpgradeNotification = ({
   }
 
   return (
-    <section className={classNames('upgrade-notification small', { 'card mb-4': shouldDisplayBorder })}>
+    <section className={classNames('upgrade-notification', { 'card mb-4': shouldDisplayBorder })}>
       <div id="courseHome-upgradeNotification">
-        <h2 className="h5 upgrade-notification-header" id="outline-sidebar-upgrade-header">
+        <h2 className="upgrade-notification-header" id="outline-sidebar-upgrade-header">
           {upgradeNotificationHeaderText}
         </h2>
         {expirationBanner}
