@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { sendTrackEvent, sendTrackingLogEvent } from '@edx/frontend-platform/analytics';
 import { FormattedDate, FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
-import { Button } from '@edx/paragon';
+import { Button, useWindowSize, breakpoints } from '@edx/paragon';
 import { setLocalStorage } from '../../data/localStorage';
 import { UpgradeButton } from '../upgrade-button';
 import {
@@ -291,6 +291,7 @@ const UpgradeNotification = ({
   const accessExpirationDate = accessExpiration ? new Date(accessExpiration.expirationDate) : null;
   const pastExpirationDeadline = accessExpiration ? new Date(dateNow) > accessExpirationDate : false;
   const upgradeBtnRef = useRef(null);
+  const wideScreen = useWindowSize().width >= breakpoints.medium.minWidth;
 
   const eventProperties = {
     org_key: org,
@@ -491,7 +492,10 @@ const UpgradeNotification = ({
   }
 
   return (
-    <section className={classNames('upgrade-notification', { 'card mb-4': shouldDisplayBorder })}>
+    <section className={classNames('upgrade-notification', {
+      'card mb-4': shouldDisplayBorder, small: !wideScreen,
+    })}
+    >
       <div id="courseHome-upgradeNotification">
         <h2 className="upgrade-notification-header" id="outline-sidebar-upgrade-header">
           {upgradeNotificationHeaderText}
