@@ -7,6 +7,7 @@ import { Button } from '@edx/paragon';
 import UnitIcon from './UnitIcon';
 import CompleteIcon from './CompleteIcon';
 import BookmarkFilledIcon from '../../bookmark/BookmarkFilledIcon';
+import { useSkipToContent } from '../../../../generic/hooks';
 
 const UnitButton = ({
   onClick,
@@ -19,7 +20,10 @@ const UnitButton = ({
   unitId,
   className,
   showTitle,
+  unitIndex,
 }) => {
+  useSkipToContent(isActive ? `${title}-${unitIndex}` : null);
+
   const handleClick = useCallback(() => {
     onClick(unitId);
   }, [onClick, unitId]);
@@ -53,7 +57,7 @@ const UnitButton = ({
       role="tabpanel"
       tabIndex={isActive ? 0 : -1}
       aria-controls={title}
-      id={title}
+      id={`${title}-${unitIndex}`}
       aria-labelledby={title}
       onKeyDown={handleKeyDown}
     >
@@ -83,6 +87,7 @@ UnitButton.propTypes = {
   showTitle: PropTypes.bool,
   title: PropTypes.string.isRequired,
   unitId: PropTypes.string.isRequired,
+  unitIndex: PropTypes.number.isRequired,
 };
 
 UnitButton.defaultProps = {
