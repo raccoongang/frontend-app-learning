@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -15,23 +15,34 @@ const WelcomeMessage = ({ courseId, intl }) => {
   const {
     welcomeMessageHtml,
   } = useModel('outline', courseId);
-
   const [display, setDisplay] = useState(true);
 
   const shortWelcomeMessageHtml = truncate(welcomeMessageHtml, 100, { byWords: true, keepWhitespaces: true });
   const messageCanBeShortened = shortWelcomeMessageHtml.length < welcomeMessageHtml.length;
   const [showShortMessage, setShowShortMessage] = useState(messageCanBeShortened);
   const dispatch = useDispatch();
+  const alertRef = useRef(null);
 
   if (!welcomeMessageHtml) {
     return null;
   }
+
+  useEffect(() => {
+    // TODO: Temporary solution due to a bug in the Paragon Alert component
+    // that prevents changing the button sizes. Delete after correction.
+    // Issue: https://github.com/openedx/paragon/issues/3205
+    if (alertRef.current) {
+      const buttons = alertRef.current.querySelectorAll('button.btn-sm');
+      buttons.forEach(btn => btn.classList.remove('btn-sm'));
+    }
+  }, [showShortMessage]);
 
   return (
     <Alert
       data-testid="alert-container-welcome"
       variant="light"
       stacked
+      ref={alertRef}
       dismissible
       show={display}
       onClose={() => {
