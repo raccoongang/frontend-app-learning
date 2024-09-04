@@ -32,13 +32,14 @@ const SequenceNavigationTabs = ({
           ref={parentRef}
         >
           {previousButton}
-          {unitIds.map(buttonUnitId => (
+          {unitIds.map((buttonUnitId, idx) => (
             <UnitButton
               key={buttonUnitId}
               unitId={buttonUnitId}
               isActive={unitId === buttonUnitId}
               showCompletion={showCompletion}
               onClick={onNavigate}
+              unitIndex={idx}
             />
           ))}
           {nextButton}
