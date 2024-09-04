@@ -6,7 +6,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button } from '@edx/paragon';
 
 import { useModel } from '../../generic/model-store';
-import { useSkipToContent } from '../../generic/hooks';
+import { useScrollToContent } from '../../generic/hooks';
 
 import messages from './messages';
 
@@ -18,7 +18,7 @@ const ProgressHeader = ({ intl }) => {
     targetUserId,
   } = useSelector(state => state.courseHome);
 
-  useSkipToContent(MAIN_CONTENT_ID);
+  useScrollToContent(MAIN_CONTENT_ID);
 
   const { administrator, userId } = getAuthenticatedUser();
 

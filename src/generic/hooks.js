@@ -70,7 +70,7 @@ export function useIFrameHeight(onIframeLoaded = null) {
  *
  * @returns {React.RefObject<HTMLElement>} - A ref object pointing to the skip link element.
  */
-export function useSkipToContent(
+export function useScrollToContent(
   targetElementId = 'main-content',
   skipLinkSelector = 'a[href="#main-content"]',
   scrollOffset = 100,

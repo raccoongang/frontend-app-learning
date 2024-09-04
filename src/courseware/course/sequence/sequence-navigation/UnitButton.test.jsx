@@ -30,6 +30,7 @@ describe('Unit Button', () => {
     mockData = {
       unitId: unit.id,
       onClick: () => {},
+      unitIndex: courseMetadata.id,
     };
   });
 
@@ -45,7 +46,7 @@ describe('Unit Button', () => {
 
   it('check button attributes', () => {
     render(<UnitButton {...mockData} showTitle />);
-    expect(screen.getByRole('tabpanel')).toHaveAttribute('id', unit.display_name);
+    expect(screen.getByRole('tabpanel')).toHaveAttribute('id', `${unit.display_name}-${courseMetadata.id}`);
     expect(screen.getByRole('tabpanel')).toHaveAttribute('aria-controls', unit.display_name);
     expect(screen.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', unit.display_name);
     expect(screen.getByRole('tabpanel')).toHaveAttribute('tabindex', '-1');

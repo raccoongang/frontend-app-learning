@@ -13,7 +13,7 @@ import SuggestedScheduleHeader from '../suggested-schedule-messaging/SuggestedSc
 import ShiftDatesAlert from '../suggested-schedule-messaging/ShiftDatesAlert';
 import UpgradeToCompleteAlert from '../suggested-schedule-messaging/UpgradeToCompleteAlert';
 import UpgradeToShiftDatesAlert from '../suggested-schedule-messaging/UpgradeToShiftDatesAlert';
-import { useSkipToContent } from '../../generic/hooks';
+import { useScrollToContent } from '../../generic/hooks';
 
 const MAIN_CONTENT_ID = 'main-content-heading';
 
@@ -22,7 +22,7 @@ const DatesTab = ({ intl }) => {
     courseId,
   } = useSelector(state => state.courseHome);
 
-  useSkipToContent(MAIN_CONTENT_ID);
+  useScrollToContent(MAIN_CONTENT_ID);
 
   const {
     isSelfPaced,

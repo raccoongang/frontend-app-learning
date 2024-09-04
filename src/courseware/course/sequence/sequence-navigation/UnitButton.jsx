@@ -7,7 +7,7 @@ import { Button } from '@edx/paragon';
 import UnitIcon from './UnitIcon';
 import CompleteIcon from './CompleteIcon';
 import BookmarkFilledIcon from '../../bookmark/BookmarkFilledIcon';
-import { useSkipToContent } from '../../../../generic/hooks';
+import { useScrollToContent } from '../../../../generic/hooks';
 
 const UnitButton = ({
   onClick,
@@ -22,7 +22,7 @@ const UnitButton = ({
   showTitle,
   unitIndex,
 }) => {
-  useSkipToContent(isActive ? `${title}-${unitIndex}` : null);
+  useScrollToContent(isActive ? `${title}-${unitIndex}` : null);
 
   const handleClick = useCallback(() => {
     onClick(unitId);
