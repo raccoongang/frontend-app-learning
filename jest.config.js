@@ -20,6 +20,9 @@ const config = createConfig('jest', {
   globalSetup: "./global-setup.js",
   verbose: true,
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    url: 'http://localhost/',
+  },
 });
 
 // delete config.testURL;
@@ -31,10 +34,10 @@ config.reporters = [...(config.reporters || []), ["jest-console-group-reporter",
   afterEachTest: {
     enable: true,
     filePaths: false,
-    reportType: "details",
+    reportType: 'details',
   },
   afterAllTests: {
-    reportType: "summary",
+    reportType: 'summary',
     enable: true,
     filePaths: true,
   },
