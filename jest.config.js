@@ -11,7 +11,7 @@ const config = createConfig('jest', {
   ],
   // see https://github.com/axios/axios/issues/5026
   moduleNameMapper: {
-    "^axios$": "axios/dist/axios.js",
+    '/^axios$/': 'axios/dist/axios.js',
     // See https://stackoverflow.com/questions/72382316/jest-encountered-an-unexpected-token-react-markdown
     'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
     '@src/(.*)': '<rootDir>/src/$1',
