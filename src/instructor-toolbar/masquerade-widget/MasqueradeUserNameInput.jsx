@@ -1,9 +1,7 @@
-import React, {
-  Component,
-} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Input } from '@openedx/paragon';
+import { Form } from '@openedx/paragon';
 
 import messages from './messages';
 
@@ -46,7 +44,7 @@ class MasqueradeUserNameInput extends Component {
       ...rest
     } = this.props;
     return (
-      <Input
+      <Form.Control
         aria-labelledby="masquerade-search-label"
         label={intl.formatMessage(messages.userNameLabel)}
         onKeyPress={(event) => this.onKeyPress(event)}

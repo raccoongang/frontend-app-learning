@@ -11,7 +11,7 @@ const config = createConfig('jest', {
   ],
   // see https://github.com/axios/axios/issues/5026
   moduleNameMapper: {
-    "^axios$": "axios/dist/axios.js",
+    '/^axios$/': 'axios/dist/axios.js',
     // See https://stackoverflow.com/questions/72382316/jest-encountered-an-unexpected-token-react-markdown
     'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
     '@src/(.*)': '<rootDir>/src/$1',
@@ -20,6 +20,9 @@ const config = createConfig('jest', {
   globalSetup: "./global-setup.js",
   verbose: true,
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    url: 'http://localhost/',
+  },
 });
 
 // delete config.testURL;
@@ -31,10 +34,10 @@ config.reporters = [...(config.reporters || []), ["jest-console-group-reporter",
   afterEachTest: {
     enable: true,
     filePaths: false,
-    reportType: "details",
+    reportType: 'details',
   },
   afterAllTests: {
-    reportType: "summary",
+    reportType: 'summary',
     enable: true,
     filePaths: true,
   },

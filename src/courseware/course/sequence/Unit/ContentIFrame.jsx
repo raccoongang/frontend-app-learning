@@ -3,7 +3,7 @@ import React from 'react';
 
 import { ErrorPage } from '@edx/frontend-platform/react';
 import { StrictDict } from '@edx/react-unit-test-utils';
-import { ModalDialog, Modal } from '@openedx/paragon';
+import { ModalDialog } from '@openedx/paragon';
 
 import PageLoading from '@src/generic/PageLoading';
 import * as hooks from './hooks';
@@ -89,28 +89,17 @@ const ContentIFrame = ({
           <iframe title={title} {...contentIFrameProps} data-testid={testIDs.contentIFrame} />
         </div>
       )}
-      {modalOptions.isOpen && (modalOptions.isFullscreen
-        ? (
-          <ModalDialog
-            dialogClassName="modal-lti"
-            onClose={handleModalClose}
-            size="fullscreen"
-            isOpen
-            hasCloseButton={false}
-          >
-            <ModalDialog.Body className={modalOptions.modalBodyClassName}>
-              {modalContent}
-            </ModalDialog.Body>
-          </ModalDialog>
-
-        ) : (
-          <Modal
-            body={modalContent}
-            dialogClassName="modal-lti"
-            onClose={handleModalClose}
-            open
-          />
-        )
+      {modalOptions.isOpen && (
+        <ModalDialog
+          size={modalOptions.isFullscreen ? 'fullscreen' : 'md'}
+          dialogClassName="modal-lti"
+          onClose={handleModalClose}
+          isOpen
+        >
+          <ModalDialog.Body>
+            {modalContent}
+          </ModalDialog.Body>
+        </ModalDialog>
       )}
     </>
   );
