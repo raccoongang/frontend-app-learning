@@ -105,6 +105,10 @@ export function fetchDiscussionTab(courseId) {
   return fetchTab(courseId, 'discussion');
 }
 
+export function fetchMentoringTab(courseId) {
+  return fetchTab(courseId, 'mentoring');
+}
+
 export function dismissWelcomeMessage(courseId) {
   return async () => postDismissWelcomeMessage(courseId);
 }
