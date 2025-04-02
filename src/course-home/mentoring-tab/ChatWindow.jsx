@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  Avatar, Card, Form, StatefulButton, Stack, Alert,
+  Avatar, Card, Form, StatefulButton, Stack, Alert, Icon,
 } from '@openedx/paragon';
+import { AutoAwesome as AutoAwesomeIcon, Cancel as CancelIcon } from '@openedx/paragon/icons';
 
-import { CHAT_STATUSES_MAP } from './constants';
+import { CHAT_SENDERS, CHAT_STATUSES_MAP } from './constants';
 import { useWebSocket } from './hooks';
 import messages from './messages';
 
@@ -26,7 +28,7 @@ const ChatWindow = () => {
   const { sendMessage } = useWebSocket({
     url: `ws://${OPENEDX_AI_SOCKET_DOMAIN}/ws/chatgpt/${courseId}/`,
     onMessage: (msg) => {
-      setChatMessages((prev) => [...prev, { sender: 'ai', text: msg.text }]);
+      setChatMessages((prev) => [...prev, { sender: CHAT_SENDERS.ai, text: msg.text }]);
       setStatus(CHAT_STATUSES_MAP.default);
       setThinking(false);
     },
@@ -42,7 +44,7 @@ const ChatWindow = () => {
       return;
     }
 
-    setChatMessages((prev) => [...prev, { sender: 'student', text: input }]);
+    setChatMessages((prev) => [...prev, { sender: CHAT_SENDERS.student, text: input }]);
     setStatus(CHAT_STATUSES_MAP.pending);
     setThinking(true);
     sendMessage({ text: input });
@@ -53,6 +55,13 @@ const ChatWindow = () => {
     lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
+  const getAvatar = (sender) => (
+    sender === CHAT_SENDERS.student ? (
+      <Avatar size="sm" className="flex-shrink-0" />
+    ) : (
+      <AutoAwesomeIcon className="pgn__avatar pgn__avatar-sm flex-shrink-0 p-2 text-gray-900" />
+    ));
+
   if (!OPENEDX_AI_SOCKET_DOMAIN) {
     return (
       <Alert variant="danger">
@@ -62,35 +71,39 @@ const ChatWindow = () => {
   }
 
   return (
-    <Card className="w-100">
+    <Card className="w-100 mt-4.5">
       <Card.Body>
         <Stack
           gap={3}
-          className="p-3 d-flex flex-column"
-          style={{ height: '28rem', overflowY: 'auto' }}
+          className="p-3 d-flex flex-column chat-window-wrapper"
         >
           {chatMessages.map((msg, idx) => (
             <Stack
               key={idx} // eslint-disable-line react/no-array-index-key
               direction="horizontal"
-              className={`w-100 fade-in ${msg.sender === 'student' ? 'justify-content-end' : 'justify-content-start'}`}
+              className={classNames('w-100 fade-in align-items-end', {
+                'justify-content-end': msg.sender === CHAT_SENDERS.student,
+                'justify-content-start': msg.sender === CHAT_SENDERS.student,
+              })}
               gap={2}
               ref={idx === chatMessages.length - 1 ? lastMessageRef : null}
             >
-              {msg.sender === 'ai' && (
-                <Avatar size="sm" className="flex-shrink-0" />
-              )}
-              <div className="p-3 border rounded bg-light" style={{ maxWidth: '65%' }}>
-                <p className="mb-0 small">{msg.text}</p>
+              {getAvatar(msg.sender)}
+              <div
+                className={classNames('p-3 chat-message', {
+                  'bg-primary-100 rounded-right rounded-top': msg.sender === CHAT_SENDERS.ai,
+                  'bg-primary-500 text-white rounded-left rounded-top order-first': msg.sender !== CHAT_SENDERS.ai,
+                })}
+              >
+                <p className="mb-0">{msg.text}</p>
               </div>
-              <small className="text-muted d-block text-end">{msg.timestamp}</small>
             </Stack>
           ))}
 
           {thinking && (
             <Stack gap={2} direction="horizontal">
-              <Avatar size="sm" className="flex-shrink-0" />
-              <p className="text-muted small m-0">
+              {getAvatar(CHAT_SENDERS.ai)}
+              <p className="text-muted m-0">
                 {intl.formatMessage(messages.thinking)}
               </p>
             </Stack>
@@ -100,18 +113,22 @@ const ChatWindow = () => {
         <Stack direction="horizontal" gap={2} className="m-3">
           <Form.Control
             value={input}
+            size="lg"
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isNotAllowedToSend && handleSend()}
             placeholder={intl.formatMessage(messages.placeholder)}
           />
           <StatefulButton
             state={status}
+            size="lg"
             disabled={isNotAllowedToSend}
             onClick={handleSend}
             labels={{
-              default: intl.formatMessage(messages.send),
-              pending: intl.formatMessage(messages.awaiting),
-              error: intl.formatMessage(messages.error),
+              [CHAT_STATUSES_MAP.default]: intl.formatMessage(messages.send),
+              [CHAT_STATUSES_MAP.error]: intl.formatMessage(messages.error),
+            }}
+            icons={{
+              [CHAT_STATUSES_MAP.error]: <Icon src={CancelIcon} />,
             }}
             disabledStates={disabledStates}
           />
