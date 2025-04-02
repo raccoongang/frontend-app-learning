@@ -1,0 +1,31 @@
+.course-mentoring-tab {
+	max-width: 70rem;
+
+	.chat-window-wrapper {
+		height: 35rem;
+		overflow-y: auto;
+	}
+
+	.chat-message {
+		max-width: 65%;
+	}
+
+	.pgn__stateful-btn-state-pending {
+		opacity: 0.65 !important;
+	}
+}
+
+.fade-in {
+	animation: fadeInUp 0.3s ease-in;
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
