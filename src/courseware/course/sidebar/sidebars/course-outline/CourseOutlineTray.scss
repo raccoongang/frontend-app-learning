@@ -78,6 +78,10 @@
                 margin-inline-start: initial;
             }
         }
+
+        &:last-child .pgn_collapsible {
+            margin-bottom: 0 !important;
+        }
     }
 
     .collapsible-body {
