@@ -35,7 +35,7 @@
     "@edx/frontend-component-footer": "npm:@raccoongang/frontend-component-footer@^13.2.0-tokens.4",
     "@edx/frontend-component-header": "npm:@raccoongang/frontend-component-header@^5.0.2-tokens.4",
     "@edx/frontend-lib-learning-assistant": "npm:@raccoongang/frontend-lib-learning-assistant@^2.0.0-tokens.2",
-    "@edx/frontend-lib-special-exams": "npm:@raccoongang/frontend-lib-special-exams@^1.14.0-tokens.2",
+    "@edx/frontend-lib-special-exams": "npm:@raccoongang/frontend-lib-special-exams@^1.14.0-tokens.3",
     "@edx/frontend-platform": "npm:@raccoongang/frontend-platform@^7.1.2-tokens.2",
     "@edx/openedx-atlas": "^0.6.0",
     "@edx/react-unit-test-utils": "npm:@raccoongang/react-unit-test-utils@^2.0.0-tokens.2",
