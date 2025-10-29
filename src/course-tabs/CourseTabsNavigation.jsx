@@ -26,7 +26,14 @@ const CourseTabsNavigation = ({
               className={classNames('nav-item flex-shrink-0 nav-link', { active: slug === activeTabSlug })}
               href={url}
             >
-              {title}
+              {(() => {
+                switch (slug) {
+                  case 'instructor_analytics':
+                    return intl.formatMessage({ id: 'learn.tabs.instructorAnalytics', defaultMessage: 'Instructor analytics' });
+                  default:
+                    return title;
+                }
+              })()}
             </a>
           ))}
         </Tabs>

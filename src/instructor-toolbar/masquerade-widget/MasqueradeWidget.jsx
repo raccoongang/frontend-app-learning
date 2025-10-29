@@ -21,7 +21,7 @@ class MasqueradeWidget extends Component {
     this.courseId = props.courseId;
     this.state = {
       autoFocus: false,
-      masquerade: 'Staff',
+      masquerade: this.props.intl.formatMessage(messages.staffLabel),
       options: [],
       shouldShowUserNameInput: false,
       masqueradeUsername: null,
@@ -36,7 +36,7 @@ class MasqueradeWidget extends Component {
         // This was explicitly denied by the backend;
         // assume it's disabled/unavailable.
         // eslint-disable-next-line no-console
-        this.onError('Unable to get masquerade options');
+        this.onError(this.props.intl.formatMessage(messages.optionsError));
       }
     }).catch((response) => {
       // There's not much we can do to recover;
@@ -71,7 +71,7 @@ class MasqueradeWidget extends Component {
   toggle(show) {
     this.setState(prevState => ({
       autoFocus: true,
-      masquerade: 'Specific Student...',
+      masquerade: this.props.intl.formatMessage(messages.specificStudentLabel),
       shouldShowUserNameInput: show === undefined ? !prevState.shouldShowUserNameInput : show,
     }));
   }
@@ -80,30 +80,42 @@ class MasqueradeWidget extends Component {
     const data = postData || {};
     const active = data.active || {};
     const available = data.available || [];
-    const options = available.map((group) => (
-      <MasqueradeWidgetOption
-        groupId={group.groupId}
-        groupName={group.name}
-        key={group.name}
-        role={group.role}
-        selected={active}
-        userName={group.userName}
-        userPartitionId={group.userPartitionId}
-        userNameInputToggle={(...args) => this.toggle(...args)}
-        onSubmit={(payload) => this.onSubmit(payload)}
-      />
-    ));
+    const options = available.map((group) => {
+      let localizedGroupName = group.name;
+      if (group.userName !== undefined) {
+        localizedGroupName = this.props.intl.formatMessage(messages.specificStudentLabel);
+      } else if (group.role === 'staff') {
+        localizedGroupName = this.props.intl.formatMessage(messages.staffLabel);
+      } else if (group.role === 'student' && !group.groupId) {
+        localizedGroupName = this.props.intl.formatMessage(messages.learnerLabel);
+      } else if (group.name === 'My certificate') {
+        localizedGroupName = this.props.intl.formatMessage(messages.myCertificateLabel);
+      }
+      return (
+        <MasqueradeWidgetOption
+          groupId={group.groupId}
+          groupName={localizedGroupName}
+          key={`${group.role || ''}-${group.name}`}
+          role={group.role}
+          selected={active}
+          userName={group.userName}
+          userPartitionId={group.userPartitionId}
+          userNameInputToggle={(...args) => this.toggle(...args)}
+          onSubmit={(payload) => this.onSubmit(payload)}
+        />
+      );
+    });
     if (active.userName) {
       this.setState({
         autoFocus: false,
-        masquerade: 'Specific Student...',
+        masquerade: this.props.intl.formatMessage(messages.specificStudentLabel),
         masqueradeUsername: active.userName,
         shouldShowUserNameInput: true,
       });
     } else if (active.groupName) {
       this.setState({ masquerade: active.groupName });
     } else if (active.role === 'student') {
-      this.setState({ masquerade: 'Learner' });
+      this.setState({ masquerade: this.props.intl.formatMessage(messages.learnerLabel) });
     }
     return options;
   }
@@ -117,10 +129,11 @@ class MasqueradeWidget extends Component {
       masqueradeUsername,
     } = this.state;
     const specificLearnerInputText = this.props.intl.formatMessage(messages.placeholder);
+    const viewThisCourseAsText = this.props.intl.formatMessage(messages.viewThisCourseAsLabel);
     return (
       <div className="flex-grow-1">
         <div className="row">
-          <span className="col-auto col-form-label pl-3">View this course as:</span>
+          <span className="col-auto col-form-label pl-3">{viewThisCourseAsText}</span>
           <Dropdown className="flex-shrink-1 mx-1">
             <Dropdown.Toggle id="masquerade-widget-toggle" variant="inverse-outline-primary">
               {masquerade}
