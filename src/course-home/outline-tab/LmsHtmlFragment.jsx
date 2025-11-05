@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { getConfig } from '@edx/frontend-platform';
-
-import { BrandingFontLoader } from '../../services';
+import * as footerExports from '@edx/frontend-component-footer';
 
 const LmsHtmlFragment = ({
   className,
@@ -13,6 +12,7 @@ const LmsHtmlFragment = ({
 }) => {
   const direction = document.documentElement?.getAttribute('dir') || 'ltr';
   const brandOverride = getConfig().PARAGON_THEME_URLS?.variants?.light?.urls?.brandOverride;
+  const BrandingFontLoader = footerExports?.services?.BrandingFontLoader;
   const brandLinkTag = brandOverride
     ? `<link rel="stylesheet" href="${brandOverride}">`
     : '';
@@ -57,8 +57,8 @@ const LmsHtmlFragment = ({
       onLoad={(event) => {
         resetIframeHeight();
         const iframeDocument = event.currentTarget?.contentDocument;
-        if (iframeDocument) {
-          new BrandingFontLoader({ config: getConfig(), targetDocument: iframeDocument }).loadScript();
+        if (iframeDocument && BrandingFontLoader) {
+          new BrandingFontLoader({ config: getConfig(), target: iframeDocument }).loadScript();
         }
       }}
       ref={iframe}
