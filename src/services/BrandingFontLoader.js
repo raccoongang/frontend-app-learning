@@ -3,51 +3,52 @@
  * @memberof module:FontLoaderScript
  */
 class BrandingFontLoader {
-  constructor({ config }) {
+  constructor({ config, targetDocument } = {}) {
     this.googleFontsUrl = config.GOOGLE_FONTS;
     this.customFonts = config.CUSTOM_FONTS;
+    this.iframeDocument = targetDocument || (typeof document !== 'undefined' ? document : null);
   }
 
   loadGoogleFonts() {
-    if (!this.googleFontsUrl) {
+    if (!this.googleFontsUrl || !this.iframeDocument) {
       return;
     }
 
     // Avoid inserting duplicates
-    if (document.querySelector('link[data-font-loader="google-font"]')) {
+    if (this.iframeDocument.querySelector('link[data-font-loader="google-font"]')) {
       return;
     }
 
-    const preconnect1 = document.createElement('link');
+    const preconnect1 = this.iframeDocument.createElement('link');
     preconnect1.rel = 'preconnect';
     preconnect1.href = 'https://fonts.googleapis.com';
     preconnect1.setAttribute('data-font-loader', 'google-font');
 
-    const preconnect2 = document.createElement('link');
+    const preconnect2 = this.iframeDocument.createElement('link');
     preconnect2.rel = 'preconnect';
     preconnect2.href = 'https://fonts.gstatic.com';
     preconnect2.crossOrigin = 'anonymous';
     preconnect2.setAttribute('data-font-loader', 'google-font');
 
-    const stylesheet = document.createElement('link');
+    const stylesheet = this.iframeDocument.createElement('link');
     stylesheet.rel = 'stylesheet';
     stylesheet.href = this.googleFontsUrl;
     stylesheet.setAttribute('data-font-loader', 'google-font');
 
-    document.head.append(preconnect1, preconnect2, stylesheet);
+    this.iframeDocument.head.append(preconnect1, preconnect2, stylesheet);
   }
 
   loadCustomFonts() {
-    if (!Array.isArray(this.customFonts) || this.customFonts.length === 0) {
+    if (!Array.isArray(this.customFonts) || this.customFonts.length === 0 || !this.iframeDocument) {
       return;
     }
 
     // Avoid duplicate injection
-    if (document.getElementById('custom-fonts-style')) {
+    if (this.iframeDocument.getElementById('custom-fonts-style')) {
       return;
     }
 
-    const style = document.createElement('style');
+    const style = this.iframeDocument.createElement('style');
     style.id = 'custom-fonts-style';
 
     style.innerHTML = this.customFonts.map(font => `
@@ -59,7 +60,7 @@ class BrandingFontLoader {
         font-display: swap;
       }
     `).join('\n');
-    document.head.appendChild(style);
+    this.iframeDocument.head.appendChild(style);
   }
 
   loadScript() {
