@@ -9,6 +9,10 @@ and this project adheres to customized Semantic Versioning e.g.: `teak-rg.1`
 [Unreleased]
 ************
 
+Added:
+======
+* Apply branding custom fonts loading for updates block in course outline (TEA-289)
+
 [release/teak-rg.1] - 2025-08-06
 ********************************
 
