@@ -80,31 +80,19 @@ class MasqueradeWidget extends Component {
     const data = postData || {};
     const active = data.active || {};
     const available = data.available || [];
-    const options = available.map((group) => {
-      let localizedGroupName = group.name;
-      if (group.userName !== undefined) {
-        localizedGroupName = this.props.intl.formatMessage(messages.specificStudentLabel);
-      } else if (group.role === 'staff') {
-        localizedGroupName = this.props.intl.formatMessage(messages.staffLabel);
-      } else if (group.role === 'student' && !group.groupId) {
-        localizedGroupName = this.props.intl.formatMessage(messages.learnerLabel);
-      } else if (group.name === 'My certificate') {
-        localizedGroupName = this.props.intl.formatMessage(messages.myCertificateLabel);
-      }
-      return (
-        <MasqueradeWidgetOption
-          groupId={group.groupId}
-          groupName={localizedGroupName}
-          key={`${group.role || ''}-${group.name}`}
-          role={group.role}
-          selected={active}
-          userName={group.userName}
-          userPartitionId={group.userPartitionId}
-          userNameInputToggle={(...args) => this.toggle(...args)}
-          onSubmit={(payload) => this.onSubmit(payload)}
-        />
-      );
-    });
+    const options = available.map((group) => (
+      <MasqueradeWidgetOption
+        groupId={group.groupId}
+        groupName={group.name}
+        key={group.name}
+        role={group.role}
+        selected={active}
+        userName={group.userName}
+        userPartitionId={group.userPartitionId}
+        userNameInputToggle={(...args) => this.toggle(...args)}
+        onSubmit={(payload) => this.onSubmit(payload)}
+      />
+    ));
     if (active.userName) {
       this.setState({
         autoFocus: false,
