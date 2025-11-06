@@ -21,7 +21,7 @@ class MasqueradeWidget extends Component {
     this.courseId = props.courseId;
     this.state = {
       autoFocus: false,
-      masquerade: 'Staff',
+      masquerade: this.props.intl.formatMessage(messages.staffLabel),
       options: [],
       shouldShowUserNameInput: false,
       masqueradeUsername: null,
@@ -36,7 +36,7 @@ class MasqueradeWidget extends Component {
         // This was explicitly denied by the backend;
         // assume it's disabled/unavailable.
         // eslint-disable-next-line no-console
-        this.onError('Unable to get masquerade options');
+        this.onError(this.props.intl.formatMessage(messages.optionsError));
       }
     }).catch((response) => {
       // There's not much we can do to recover;
@@ -71,7 +71,7 @@ class MasqueradeWidget extends Component {
   toggle(show) {
     this.setState(prevState => ({
       autoFocus: true,
-      masquerade: 'Specific Student...',
+      masquerade: this.props.intl.formatMessage(messages.specificStudentLabel),
       shouldShowUserNameInput: show === undefined ? !prevState.shouldShowUserNameInput : show,
     }));
   }
@@ -96,14 +96,14 @@ class MasqueradeWidget extends Component {
     if (active.userName) {
       this.setState({
         autoFocus: false,
-        masquerade: 'Specific Student...',
+        masquerade: this.props.intl.formatMessage(messages.specificStudentLabel),
         masqueradeUsername: active.userName,
         shouldShowUserNameInput: true,
       });
     } else if (active.groupName) {
       this.setState({ masquerade: active.groupName });
     } else if (active.role === 'student') {
-      this.setState({ masquerade: 'Learner' });
+      this.setState({ masquerade: this.props.intl.formatMessage(messages.learnerLabel) });
     }
     return options;
   }
@@ -117,10 +117,11 @@ class MasqueradeWidget extends Component {
       masqueradeUsername,
     } = this.state;
     const specificLearnerInputText = this.props.intl.formatMessage(messages.placeholder);
+    const viewThisCourseAsText = this.props.intl.formatMessage(messages.viewThisCourseAsLabel);
     return (
       <div className="flex-grow-1">
         <div className="row">
-          <span className="col-auto col-form-label pl-3">View this course as:</span>
+          <span className="col-auto col-form-label pl-3">{viewThisCourseAsText}</span>
           <Dropdown className="flex-shrink-1 mx-1">
             <Dropdown.Toggle id="masquerade-widget-toggle" variant="inverse-outline-primary">
               {masquerade}

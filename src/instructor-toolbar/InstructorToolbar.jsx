@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
 
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { ALERT_TYPES, AlertList } from '../generic/user-messages';
 import Alert from '../generic/user-messages/Alert';
 import MasqueradeWidget from './masquerade-widget';
@@ -75,17 +76,23 @@ const InstructorToolbar = (props) => {
           {(urlStudio || urlInsights) && (
             <>
               <hr className="border-light" />
-              <span className="mr-2 mt-1 col-form-label">View course in:</span>
+              <span className="mr-2 mt-1 col-form-label">
+                <FormattedMessage id="instructorToolbar.viewCourseIn.label" defaultMessage="View course in:" />
+              </span>
             </>
           )}
           {urlStudio && (
             <span className="mx-1 my-1">
-              <a className="btn btn-inverse-outline-primary" href={urlStudio}>Studio</a>
+              <a className="btn btn-inverse-outline-primary" href={urlStudio}>
+                <FormattedMessage id="instructorToolbar.studio.link" defaultMessage="Studio" />
+              </a>
             </span>
           )}
           {urlInsights && (
             <span className="mx-1 my-1">
-              <a className="btn btn-inverse-outline-primary" href={urlInsights}>Insights</a>
+              <a className="btn btn-inverse-outline-primary" href={urlInsights}>
+                <FormattedMessage id="instructorToolbar.insights.link" defaultMessage="Insights" />
+              </a>
             </span>
           )}
         </div>
