@@ -12,3 +12,4 @@ and this project adheres to customized Semantic Versioning e.g.: `verawood-rg.1`
 Added:
 ======
 * Apply branding custom fonts loading for updates block in course outline (TEA-289)
+* Mirror the active dark theme inside the course-outline welcome/handouts iframe via the shared ``theme-variant`` cookie (ENG-63)
