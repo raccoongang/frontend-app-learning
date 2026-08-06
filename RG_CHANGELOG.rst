@@ -13,3 +13,7 @@ Added:
 ======
 * Apply branding custom fonts loading for updates block in course outline (TEA-289)
 * Mirror the active dark theme inside the course-outline welcome/handouts iframe via the shared ``theme-variant`` cookie (ENG-63)
+
+Removed:
+========
+* codecov CI action, and the ``coverage`` job left with nothing to do — the fork has no codecov project, so the step failed every run (VERA-6)
