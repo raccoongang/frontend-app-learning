@@ -9,6 +9,9 @@ and this project adheres to customized Semantic Versioning e.g.: `teak-rg.1`
 [Unreleased]
 ************
 
+[release/teak-rg.4] - 2026-09-10
+********************************
+
 Added:
 ======
 * Mirror the active dark theme inside the course-outline welcome/handouts iframe via the shared ``theme-variant`` cookie (ENG-63)
