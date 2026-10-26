@@ -9,6 +9,10 @@ and this project adheres to customized Semantic Versioning e.g.: `teak-rg.1`
 [Unreleased]
 ************
 
+Fixed:
+======
+* Courseware no longer renders a sequence or unit of another course pasted into a course URL; it redirects within the course instead (TEA-290)
+
 [release/teak-rg.4] - 2026-09-10
 ********************************
 
