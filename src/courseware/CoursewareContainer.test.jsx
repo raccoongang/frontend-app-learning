@@ -17,6 +17,7 @@ import { initializeMockApp, waitFor } from '../setupTest';
 import { DECODE_ROUTES } from '../constants';
 
 import CoursewareContainer, {
+  checkForeignBlockRedirect,
   checkResumeRedirect,
   checkSectionToSequenceRedirect,
   checkSectionUnitToUnitRedirect,
@@ -309,6 +310,53 @@ describe('CoursewareContainer', () => {
       });
     });
 
+    describe('when the URL contains a sequence or unit of another course', () => {
+      const otherCourseId = 'course-v1:OtherOrg+Other101+2025';
+      const otherUnitBlocks = [Factory.build('block', { type: 'vertical' }, { courseId: otherCourseId })];
+      const { sequenceBlocks: [otherSequenceBlock] } = buildSimpleCourseBlocks(
+        otherCourseId,
+        'Other course',
+        { unitBlocks: otherUnitBlocks },
+      );
+      const otherSequenceMetadataUrl = `${getConfig().LMS_BASE_URL}/api/courseware/sequence/${otherSequenceBlock.id}`;
+      const otherBlocksPath = `${otherSequenceBlock.id}/${otherUnitBlocks[0].id}`;
+
+      beforeEach(() => {
+        axiosMock.onGet(otherSequenceMetadataUrl).reply(200, Factory.build(
+          'sequenceMetadata',
+          {},
+          { courseId: otherCourseId, sequenceBlock: otherSequenceBlock, unitBlocks: otherUnitBlocks },
+        ));
+        axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courseware/resume/${courseId}`).reply(200, {
+          sectionId: defaultSequenceBlock.id,
+          unitId: defaultUnitBlocks[1].id,
+        });
+      });
+
+      function assertShowsCourseUnit(container, unitId) {
+        expect(global.location.href).toEqual(`http://localhost/course/${courseId}/${defaultSequenceBlock.id}/${unitId}`);
+        expect(container.querySelector('.fake-unit')).toHaveTextContent(`${courseId} ${unitId}`);
+        expect(axiosMock.history.get.map(request => request.url)).not.toContain(otherSequenceMetadataUrl);
+      }
+
+      it.each([
+        ['a sequence and unit', `/course/${courseId}/${otherBlocksPath}`],
+        ['a sequence', `/course/${courseId}/${otherSequenceBlock.id}`],
+        ['a preview sequence and unit', `/preview/course/${courseId}/${otherBlocksPath}`],
+      ])('should resume within the course from %s of another course', async (_, url) => {
+        history.push(url);
+        const container = await loadContainer();
+        assertLoadedHeader(container);
+        assertShowsCourseUnit(container, defaultUnitBlocks[1].id);
+      });
+
+      it('should drop a unit of another course and pick a unit of the sequence', async () => {
+        history.push(`/course/${courseId}/${defaultSequenceBlock.id}/${otherUnitBlocks[0].id}`);
+        const container = await loadContainer();
+        assertShowsCourseUnit(container, defaultUnitBlocks[0].id);
+      });
+    });
+
     describe('when the URL contains a unit marker', () => {
       it('should redirect /first to the first unit', async () => {
         history.push(`/course/${courseId}/${defaultSequenceBlock.id}/first`);
@@ -481,6 +529,32 @@ describe('Course redirect functions', () => {
   beforeEach(() => {
     navigate = jest.fn();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+  });
+
+  describe('checkForeignBlockRedirect', () => {
+    const courseId = 'course-v1:Org+A+Run';
+    const sequenceId = 'block-v1:Org+A+Run+type@sequential+block@s1';
+    const unitId = 'block-v1:Org+A+Run+type@vertical+block@u1';
+    const otherSequenceId = 'block-v1:Org+B+Run+type@sequential+block@s1';
+    const otherUnitId = 'block-v1:Org+B+Run+type@vertical+block@u1';
+
+    it('returns when the route is within the course', () => {
+      checkForeignBlockRedirect(courseId, sequenceId, unitId, navigate, false);
+      expect(navigate).not.toHaveBeenCalled();
+    });
+
+    it('goes to the course root from a sequence of another course', () => {
+      checkForeignBlockRedirect(courseId, otherSequenceId, otherUnitId, navigate, true);
+      expect(navigate).toHaveBeenCalledWith(`/course/${courseId}`, { replace: true });
+    });
+
+    it.each([
+      [false, `/course/${courseId}/${sequenceId}`],
+      [true, `/preview/course/${courseId}/${sequenceId}`],
+    ])('drops a unit of another course (isPreview=%s)', (isPreview, expectedUrl) => {
+      checkForeignBlockRedirect(courseId, sequenceId, otherUnitId, navigate, isPreview);
+      expect(navigate).toHaveBeenCalledWith(expectedUrl, { replace: true });
+    });
   });
 
   describe('isPreview equals true', () => {

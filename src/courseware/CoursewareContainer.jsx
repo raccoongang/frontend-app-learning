@@ -12,11 +12,22 @@ import {
   getSequenceForUnitDeprecated,
   saveSequencePosition,
 } from './data';
+import { isBlockInCourse, isRouteInCourse } from './data/utils';
 import { TabPage } from '../tab-page';
 
 import Course from './course';
 import { handleNextSectionCelebration } from './course/celebration';
 import withParamsAndNavigation from './utils';
+
+// Look at where this is called in componentDidUpdate for more info about its usage
+export const checkForeignBlockRedirect = memoize((courseId, sequenceId, unitId, navigate, isPreview) => {
+  if (!isBlockInCourse(sequenceId, courseId)) {
+    navigate(`/course/${courseId}`, { replace: true });
+  } else if (!isBlockInCourse(unitId, courseId)) {
+    const sequenceUrl = `/course/${courseId}/${sequenceId}`;
+    navigate(isPreview ? `/preview${sequenceUrl}` : sequenceUrl, { replace: true });
+  }
+});
 
 // Look at where this is called in componentDidUpdate for more info about its usage
 export const checkResumeRedirect = memoize(
@@ -176,10 +187,13 @@ class CoursewareContainer extends Component {
     const {
       routeCourseId,
       routeSequenceId,
+      routeUnitId,
     } = this.props;
     // Load data whenever the course or sequence ID changes.
     this.checkFetchCourse(routeCourseId);
-    this.checkFetchSequence(routeSequenceId);
+    if (isRouteInCourse(routeCourseId, routeSequenceId, routeUnitId)) {
+      this.checkFetchSequence(routeSequenceId);
+    }
   }
 
   componentDidUpdate() {
@@ -198,6 +212,15 @@ class CoursewareContainer extends Component {
       navigate,
       isPreview,
     } = this.props;
+
+    // Check foreign block redirect:
+    //    /course/:courseId/:otherCourseSequenceId[/:unitId] -> /course/:courseId
+    //    /course/:courseId/:sequenceId/:otherCourseUnitId   -> /course/:courseId/:sequenceId
+    // by dropping the IDs of another course before anything of it is loaded or rendered.
+    checkForeignBlockRedirect(routeCourseId, routeSequenceId, routeUnitId, navigate, isPreview);
+    if (!isRouteInCourse(routeCourseId, routeSequenceId, routeUnitId)) {
+      return;
+    }
 
     // Load data whenever the course or sequence ID changes.
     this.checkFetchCourse(routeCourseId);
