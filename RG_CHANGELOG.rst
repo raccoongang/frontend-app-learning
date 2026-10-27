@@ -9,6 +9,10 @@ and this project adheres to customized Semantic Versioning e.g.: `verawood-rg.1`
 [Unreleased]
 ************
 
+Fixed:
+======
+* Courseware no longer renders a sequence or unit of another course pasted into a course URL; it redirects within the course instead (TEA-290)
+
 Added:
 ======
 * Apply branding custom fonts loading for updates block in course outline (TEA-289)

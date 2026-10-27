@@ -147,6 +147,41 @@ export function normalizeSequenceMetadata(sequence) {
   };
 }
 
+const USAGE_KEY_PATTERN = /^(?:ccx-)?block-v1:(.+?)\+type@/;
+const COURSE_KEY_PATTERN = /^(?:course|ccx)-v1:(.+)/;
+
+// branch@ / version@ name a revision of the same course, so they are left out of the comparison.
+const normalizeKeyBody = (keyBody) => keyBody.toLowerCase().replace(/\+(?:branch|version)@[^+]*/g, '');
+
+/**
+ * Whether the usage key names a block of the given course; a CCX also owns its master course's blocks.
+ * Unrecognised key formats count as belonging, so an unexpected format never hides content.
+ * @param {string} usageKey - e.g. `block-v1:edX+DemoX+Demo_Course+type@sequential+block@abc`.
+ * @param {string} courseId - e.g. `course-v1:edX+DemoX+Demo_Course`.
+ * @returns {boolean}
+ */
+export function isBlockInCourse(usageKey, courseId) {
+  const usageMatch = USAGE_KEY_PATTERN.exec(usageKey || '');
+  const courseMatch = COURSE_KEY_PATTERN.exec(courseId || '');
+  if (!usageMatch || !courseMatch) {
+    return true;
+  }
+  const block = normalizeKeyBody(usageMatch[1]);
+  const course = normalizeKeyBody(courseMatch[1]);
+  return block === course || block === course.replace(/\+ccx@[^+]*$/, '');
+}
+
+/**
+ * Whether the sequence and unit IDs of a courseware route both belong to its course.
+ * @param {string} courseId
+ * @param {string} [sequenceId]
+ * @param {string} [unitId]
+ * @returns {boolean}
+ */
+export function isRouteInCourse(courseId, sequenceId, unitId) {
+  return isBlockInCourse(sequenceId, courseId) && isBlockInCourse(unitId, courseId);
+}
+
 /**
  * Normalizes outline blocks for a given course.
  * @param {string} courseId - The unique identifier for the course.
