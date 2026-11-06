@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { getLocale, isRtl, useIntl } from '@edx/frontend-platform/i18n';
@@ -20,6 +21,17 @@ const GradeBar = ({ passingGrade }) => {
     gradesFeatureIsFullyLocked,
   } = useModel('progress', courseId);
 
+  const [layoutKey, setLayoutKey] = useState(0);
+
+  useEffect(() => {
+    if (typeof ResizeObserver === 'undefined') {
+      return undefined;
+    }
+    const observer = new ResizeObserver(() => setLayoutKey((key) => key + 1));
+    observer.observe(document.body);
+    return () => observer.disconnect();
+  }, []);
+
   const currentGrade = Number((percent * 100).toFixed(0));
 
   const lockedTooltipClassName = gradesFeatureIsFullyLocked ? 'locked-overlay' : '';
@@ -40,8 +52,8 @@ const GradeBar = ({ passingGrade }) => {
           {/* End divider */}
           <rect className="grade-bar__divider" x="99.7%" />
         </g>
-        <PassingGradeTooltip passingGrade={passingGrade} tooltipClassName={lockedTooltipClassName} />
-        <CurrentGradeTooltip tooltipClassName={lockedTooltipClassName} />
+        <PassingGradeTooltip key={`passing-${layoutKey}`} passingGrade={passingGrade} tooltipClassName={lockedTooltipClassName} />
+        <CurrentGradeTooltip key={`current-${layoutKey}`} tooltipClassName={lockedTooltipClassName} />
       </svg>
     </div>
   );
