@@ -9,9 +9,14 @@ and this project adheres to customized Semantic Versioning e.g.: `teak-rg.1`
 [Unreleased]
 ************
 
+[release/teak-rg.5] - 2026-11-25
+********************************
+
 Fixed:
 ======
 * Courseware no longer renders a sequence or unit of another course pasted into a course URL; it redirects within the course instead (TEA-290)
+* Position the grade bar tooltips on the Progress page correctly on the first render (VERA-74)
+* Keep the courseware search dialog within the viewport (CC-197)
 
 [release/teak-rg.4] - 2026-09-10
 ********************************
